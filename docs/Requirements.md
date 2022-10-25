@@ -10,3 +10,12 @@
 * The program must be able to write to standard output
 
 ## Non-functional Requirements
+
+* The program must be written in C#
+* The program must run using dotnet
+* The documentation must be written in english
+* Diagrams in the documentation must be written using UML
+* The development uses CI/CD principles
+* The development uses an Agile and SCRUM-Like style
+* The program must be easy to change and maintain
+* The program must have automated test to make correctness probable
