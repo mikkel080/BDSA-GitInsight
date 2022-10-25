@@ -5,5 +5,7 @@ This project is a part of the course Analysis, Design and Software Architecture 
 
 ## Group
 Number: 1
+
 Name: Zero
-Members: emno, amdh, mbia, ehel, hast, Rafa
+
+Members: `emno`, `amdh`, `mbia`, `ehel`, `hast`, `rafa`
