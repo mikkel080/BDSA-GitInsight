@@ -8,10 +8,11 @@ class Program {
                 Console.WriteLine(commit.Author.Name + " " + commit.Author.When);
             }
             FrequencyMode(commits);
+            AuthorMode(commits);
         }
     }
 
-    static void FrequencyMode(List<Commit> list){
+    static void FrequencyMode(IEnumerable<Commit> list){
         var q = list.GroupBy(
             (item => item.Author.When.Date),
             (key, elements) => new {
@@ -24,7 +25,17 @@ class Program {
         }
     }
 
-    static void AuthorMode(){
-
+    static void AuthorMode(List<Commit> list){
+        var q = list.GroupBy(
+            (item => item.Author.Name),
+            (key, elements) => new {
+                key = key,
+                items = elements
+            }
+        );
+        foreach (var commit in q){
+            Console.WriteLine(commit.key);
+            FrequencyMode(commit.items);
+        }
     }
 }
