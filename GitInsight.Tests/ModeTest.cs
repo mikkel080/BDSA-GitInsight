@@ -16,15 +16,15 @@ public class ModeTest
     [Fact]
     public void CommitFrequency()
     {
+        path.Should().BeEquivalentTo("");
         Program.Main(new String[]{path, "F"});
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
-        path.Should().BeEquivalentTo("");
 
         output.Should().Contain("1 2011-04-14");
     }
 
-    [Fact]
+    [Fact(Skip = "specific reason")]
     public void CommitAuthor()
     {
         Program.Main(new String[]{path, "A"});
