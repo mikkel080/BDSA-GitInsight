@@ -10,12 +10,13 @@ public class ModeTest
         Console.SetOut(writer);
 
         path = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
+        path = path+@"\testrepo.git";
     }
 
     [Fact]
     public void CommitFrequency()
     {
-        Program.Main(new String[]{path+@"\testrepo.git", "F"});
+        Program.Main(new String[]{path, "F"});
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
 
@@ -25,7 +26,7 @@ public class ModeTest
     [Fact]
     public void CommitAuthor()
     {
-        Program.Main(new String[]{path+@"\testrepo.git", "A"});
+        Program.Main(new String[]{path, "A"});
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
 
