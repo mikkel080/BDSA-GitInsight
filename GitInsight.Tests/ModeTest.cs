@@ -19,6 +19,7 @@ public class ModeTest
         Program.Main(new String[]{path, "F"});
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
+        path.Should().BeEquivalentTo("");
 
         output.Should().Contain("1 2011-04-14");
     }
