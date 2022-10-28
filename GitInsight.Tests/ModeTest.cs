@@ -10,13 +10,17 @@ public class ModeTest
         Console.SetOut(writer);
 
         path = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
-        path = path+@"\testrepo.git";
+        
+        if(path.Contains(@"\")){
+            path = path+@"\testrepo.git";
+        }else{
+            path = path+@"/testrepo.git";
+        }
     }
 
     [Fact]
     public void CommitFrequency()
     {
-        path.Should().BeEquivalentTo("");
         Program.Main(new String[]{path, "F"});
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
@@ -24,7 +28,7 @@ public class ModeTest
         output.Should().Contain("1 2011-04-14");
     }
 
-    [Fact(Skip = "specific reason")]
+    [Fact]
     public void CommitAuthor()
     {
         Program.Main(new String[]{path, "A"});
