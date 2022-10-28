@@ -28,7 +28,7 @@ public class Program {
             }
         );
         foreach (var commit in q){
-            Console.WriteLine(prefix+commit.count +" "+commit.key.ToShortDateString());
+            Console.WriteLine(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
         }
     }
 
