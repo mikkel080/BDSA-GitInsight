@@ -1,18 +1,25 @@
-﻿using LibGit2Sharp;
-class Program {
-    static void Main(string[] args){
+﻿namespace GitInsight;
+
+using LibGit2Sharp;
+public class Program {
+    public static void Main(string[] args){
         using (var repo = new Repository(args[0])){
             var commits = repo.Commits.ToList();
-            Console.WriteLine(commits.Count());
-            foreach (var commit in commits){
-                Console.WriteLine(commit.Author.Name + " " + commit.Author.When);
+            
+            if(args.Count() <2){
+                return;
             }
-            FrequencyMode(commits);
-            AuthorMode(commits);
+            if(args[1] == "A"){
+                AuthorMode(commits);
+            }else if(args[1] == "F"){
+                FrequencyMode(commits);
+            }else{
+                return;
+            }
         }
     }
 
-    static void FrequencyMode(IEnumerable<Commit> list){
+    static void FrequencyMode(IEnumerable<Commit> list, String prefix = ""){
         var q = list.GroupBy(
             (item => item.Author.When.Date),
             (key, elements) => new {
@@ -21,11 +28,11 @@ class Program {
             }
         );
         foreach (var commit in q){
-            Console.WriteLine(commit.key.ToShortDateString() + " " + commit.count);
+            Console.WriteLine(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
         }
     }
 
-    static void AuthorMode(List<Commit> list){
+    static void AuthorMode(IEnumerable<Commit> list){
         var q = list.GroupBy(
             (item => item.Author.Name),
             (key, elements) => new {
@@ -35,7 +42,8 @@ class Program {
         );
         foreach (var commit in q){
             Console.WriteLine(commit.key);
-            FrequencyMode(commit.items);
+            FrequencyMode(commit.items, "\t");
+            Console.WriteLine();
         }
     }
 }
