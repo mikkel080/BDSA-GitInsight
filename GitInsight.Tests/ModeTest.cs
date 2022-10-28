@@ -5,23 +5,27 @@ public class ModeTest
     StringWriter writer;
     string path;
 
-    public ModeTest(){
+    public ModeTest()
+    {
         writer = new StringWriter();
         Console.SetOut(writer);
 
         path = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
-        
-        if(path.Contains(@"\")){
-            path = path+@"\testrepo.git";
-        }else{
-            path = path+@"/testrepo.git";
+
+        if (path.Contains(@"\"))
+        {
+            path = path + @"\testrepo.git";
+        }
+        else
+        {
+            path = path + @"/testrepo.git";
         }
     }
 
     [Fact]
     public void CommitFrequency()
     {
-        Program.Main(new String[]{path, "F"});
+        Program.Main(new String[] { path, "F" });
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
 
@@ -31,7 +35,7 @@ public class ModeTest
     [Fact]
     public void CommitAuthor()
     {
-        Program.Main(new String[]{path, "A"});
+        Program.Main(new String[] { path, "A" });
 
         var output = writer.GetStringBuilder().ToString().TrimEnd();
 
