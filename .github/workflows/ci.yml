@@ -37,3 +37,6 @@ jobs:
 
       - name: Test
         run: dotnet test
+        
+      - name: dotnet-format
+        uses: xt0rted/dotnet-format@v1.2.0
