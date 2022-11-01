@@ -19,5 +19,9 @@ public partial class GitInsightContext : DbContext {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
