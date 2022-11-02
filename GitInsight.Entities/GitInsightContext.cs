@@ -20,6 +20,34 @@ public partial class GitInsightContext : DbContext {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<Repo>()
+            .Property(x => x.Name)
+            .HasMaxLength(100);
+
+            modelBuilder.Entity<Repo>()
+            .HasIndex(x => x.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<Author>()
+            .Property(x => x.Name)
+            .HasMaxLength(100);
+
+            modelBuilder.Entity<Author>()
+            .Property(x => x.Email)
+            .HasMaxLength(100);
+
+            modelBuilder.Entity<Author>()
+            .HasIndex(x => x.Email)
+            .IsUnique();
+
+            modelBuilder.Entity<Commit>()
+            .HasOne(c => c.Repo)
+            .WithMany(r => r.AllCommits);
+
+            modelBuilder.Entity<Commit>()
+            .HasOne(c => c.Author)
+            .WithMany(a => a.AllCommits);
+
             OnModelCreatingPartial(modelBuilder);
         }
 
