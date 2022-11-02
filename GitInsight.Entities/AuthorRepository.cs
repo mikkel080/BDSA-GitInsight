@@ -38,7 +38,7 @@ public class AuthorRepository : IAuthorRepository {
                         where a.Id == authorId
                         select a).FirstOrDefault();
         if (author is null) {
-            return null;
+            return null!;
         }
         else {
             return new AuthorDTO(author.Id, author.Name, author.Email, getCommitsAsDTOList(author.AllCommits));

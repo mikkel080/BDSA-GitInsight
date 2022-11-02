@@ -36,7 +36,7 @@ public class CommitRepository : ICommitRepository {
                         where c.Id == commitId
                         select c).FirstOrDefault();
         if (commit is null) {
-            return null;
+            return null!;
         }
         else {
             return new CommitDTO(commit.Id, commit.Repo.Name, commit.Author.Name, commit.Date);
