@@ -11,4 +11,4 @@ Name: Zero
 Members: `emno`, `amdh`, `mbia`, `ehel`, `hast`, `rafa`
 
 ## Group expectations
-We except to use about 5-6 hours a week on the project and we have a loose format, where members can skip meetings or take them online if needed, as long as they stay up-to-date on our discord.
+We expect to use about 6-10 hours a week on the project and we have a loose format, where members can skip meetings or take them online if needed, as long as they stay up-to-date on our discord.
