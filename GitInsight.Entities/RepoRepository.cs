@@ -32,7 +32,7 @@ public class RepoRepository : IRepoRepository {
     {
         var repos = from r in _context.Repos
                         orderby r.Id
-                        select new RepoDTO(r.Id, r.Name, r.LatestCommit, getCommitsAsDTOList(r.AllCommits));
+                        select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList());
 
         return repos.ToArray();
     }
@@ -42,33 +42,33 @@ public class RepoRepository : IRepoRepository {
         var repo = _context.Repos.FirstOrDefault(r => r.Id == repoId);
 
         return (repo is not null 
-            ? new RepoDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits))
+            ? new RepoDTO(repo.Id, repo.Name, repo.LatestCommit, repo.AllCommits.Select(c => c.Id).ToList())
             : null)!;
     }
 
-    public Response Update(RepoUpdateDTO repo)
+    public Response Update(RepoUpdateDTO repoUpdate)
     {
-        var repoUpdate = _context.Repos.Find(repo.Id);
+        var repo = _context.Repos.Find(repoUpdate.Id);
 
-        if (repoUpdate is null) 
+        if (repo is null) 
         {
             return Response.NotFound;
         }
         else
         {
             //Merges two lists without duplicates
-            var newList = getCommitsList(repo.AllCommits).ToList().Union(repoUpdate.AllCommits).ToList();
+            var newList = getCommitsList(repoUpdate.AllCommits).ToList().Union(repo.AllCommits).ToList();
             
-            if (newList.Count <= repo.AllCommits.Count) 
+            if (repoUpdate.AllCommits.Count <= repo.AllCommits.Count) 
             {
                 return Response.Conflict;
             }
             else
             {
                 //Saves the new list to a merged and ordered by date list
-                repoUpdate.AllCommits = newList.OrderBy(c => c.Date).ToList();
+                repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
                 
-                repoUpdate.LatestCommit = repo.LatestCommit;
+                repo.LatestCommit = repo.LatestCommit;
                 _context.SaveChanges();
                     
                 return Response.Updated;
@@ -91,7 +91,5 @@ public class RepoRepository : IRepoRepository {
     }
 
     private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
-
-    private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
 
 }

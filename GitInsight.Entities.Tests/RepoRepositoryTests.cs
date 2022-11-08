@@ -15,6 +15,14 @@ public sealed class RepoRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
+        var author = new Author("AuthorName");
+        var repo = new Repo("RepoName", 1);
+        var commit = new Commit(){Repo = repo, Author = author, Date = DateTime.Now};
+        var commit2 = new Commit(){Repo = repo, Author = author, Date = DateTime.Now.AddMilliseconds(10)};
+        context.Authors.Add(author);
+        context.Repos.Add(repo);
+        context.Commits.AddRange(commit, commit2);
+        context.SaveChanges();
 
         _context = context;
         _repository = new RepoRepository(_context);
@@ -27,13 +35,13 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void Create_repo_returns_created(){
         // Arrange
-        var repo = new RepoCreateDTO("name", 0, new List<int>());
+        var repo = new RepoCreateDTO("name", 1, new List<int>());
         // Act
         var (response, repoId) = _repository.Create(repo);
 
         // Assert
         Assert.Equal(Response.Created, response);
-        Assert.Equal(1, repoId);
+        Assert.Equal(2, repoId);
     }
 
     [Fact]
@@ -53,7 +61,7 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void Read_repo_count_0() {
         // Arrange
-
+        _repository.Delete(1);
         // Act
         var repoList = _repository.Read();
 
@@ -63,30 +71,24 @@ public sealed class RepoRepositoryTests : IDisposable
 
     [Fact]
     public void Read_repo_count_1() {
-        // Arrange
-        var repo = new Repo("name", 0);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-
         // Act
         var repoList = _repository.Read();
 
         // Assert
-        Assert.True(repoList.Count() == 1);
+        repoList.Count().Should().Be(1);
     }
 
     [Fact]
     public void repo_find_found() {
         // Arrange
-        var repo = new Repo("name", 0);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
+        _repository.Create(new RepoCreateDTO("name", 1, new List<int>()));
         
         // Act
-        var repoInRepo = _repository.Find(1);
+        var repoInRepo = _repository.Find(2);
 
-        // Assert()
-        Assert.Equal(new RepoDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits)), repoInRepo);
+        // Assert
+        repoInRepo.Id.Should().Be(2);
+        repoInRepo.Name.Should().BeEquivalentTo("name");
     }
 
     [Fact]
@@ -107,8 +109,7 @@ public sealed class RepoRepositoryTests : IDisposable
         var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-
-        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits));
+        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, new List<int>(){1, 2});
 
         // Act
         var response = _repository.Update(repoUpdate);
@@ -125,7 +126,7 @@ public sealed class RepoRepositoryTests : IDisposable
         _context.Repos.Add(repo);
         _context.SaveChanges();
 
-        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits));
+        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, new List<int>());
 
         // Act
         var response = _repository.Update(repoUpdate);
@@ -137,15 +138,8 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void Update_nonexistant_repo(){
         // Arrange
-        var repo = new Repo("name", 0);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-        var author = new Author("name");
-        _context.Authors.Add(author);
-        _context.SaveChanges();
-        var commit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
 
-        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits));
+        var repoUpdate = new RepoUpdateDTO(100, "name", 0, new List<int>(){2});
 
         // Act
         var response = _repository.Update(repoUpdate);
@@ -163,7 +157,7 @@ public sealed class RepoRepositoryTests : IDisposable
         _context.SaveChanges();
 
         // Act
-        var response = _repository.Delete(1);
+        var response = _repository.Delete(2);
 
         // Assert
         response.Should().Be(Response.Deleted);
