@@ -20,7 +20,7 @@ public class CommitRepository : ICommitRepository {
 
         var entity = new Commit(){
             Repo = repo,
-            Author =  author,
+            Author =  FindOrCreateAuthor(commit.AuthorName),
             Date = commit.Date};
         _context.Commits.Add(entity);
         _context.SaveChanges();
