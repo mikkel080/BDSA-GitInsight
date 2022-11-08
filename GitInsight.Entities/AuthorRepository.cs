@@ -51,10 +51,8 @@ public class AuthorRepository : IAuthorRepository {
         if (entity is null) {
             return Response.NotFound;
         }
-        else if (_context.Authors.FirstOrDefaultAsync(a => a.Id != author.Id && a.Name == author.Name) != null) {
-            return Response.Conflict;
-        }
-        else {
+        else 
+        {
             entity.Name = author.Name;
             _context.SaveChanges();
             return Response.Updated;
