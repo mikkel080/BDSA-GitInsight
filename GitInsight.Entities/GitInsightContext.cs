@@ -32,6 +32,10 @@ public partial class GitInsightContext : DbContext {
             .Property(x => x.Name)
             .HasMaxLength(100);
 
+            modelBuilder.Entity<Author>()
+            .HasIndex(x => x.Name)
+            .IsUnique();
+
             modelBuilder.Entity<Commit>()
             .HasOne(c => c.Repo)
             .WithMany(r => r.AllCommits)
