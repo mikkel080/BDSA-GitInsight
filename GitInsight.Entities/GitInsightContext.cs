@@ -32,21 +32,15 @@ public partial class GitInsightContext : DbContext {
             .Property(x => x.Name)
             .HasMaxLength(100);
 
-            modelBuilder.Entity<Author>()
-            .Property(x => x.Email)
-            .HasMaxLength(100);
-
-            modelBuilder.Entity<Author>()
-            .HasIndex(x => x.Email)
-            .IsUnique();
-
             modelBuilder.Entity<Commit>()
             .HasOne(c => c.Repo)
-            .WithMany(r => r.AllCommits);
+            .WithMany(r => r.AllCommits)
+            .HasForeignKey(e => e.RepoID);
 
             modelBuilder.Entity<Commit>()
             .HasOne(c => c.Author)
-            .WithMany(a => a.AllCommits);
+            .WithMany(a => a.AllCommits)
+            .HasForeignKey(e => e.AuthorID);
 
             OnModelCreatingPartial(modelBuilder);
         }

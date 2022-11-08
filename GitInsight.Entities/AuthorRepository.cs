@@ -12,24 +12,24 @@ public class AuthorRepository : IAuthorRepository {
 
     public (Response Response, int AuthorID) Create(AuthorCreateDTO author) {
         var entity = (from a in _context.Authors
-                        where a.Email == author.Email
+                        where a.Name == author.Name
                         select a).FirstOrDefault();
         if (entity is null){
-            entity = new Author(author.Name, author.Email, getCommitsList(author.AllCommits));
+            entity = new Author(author.Name);
             _context.Authors.Add(entity);
             _context.SaveChanges();
             return (Response.Created, entity.Id);
         }
         else
         {
-            return (Response.Conflict, -1);
+            return (Response.Conflict, entity.Id);
         }
 
     }
 
     public IReadOnlyCollection<AuthorDTO> Read(){
         var authors = from a in _context.Authors
-                        select new AuthorDTO(a.Id, a.Name, a.Email, getCommitsAsDTOList(a.AllCommits));
+                        select new AuthorDTO(a.Id, a.Name, getCommitsAsDTOList(a.AllCommits));
         return authors.ToList();
     }
 
@@ -41,7 +41,7 @@ public class AuthorRepository : IAuthorRepository {
             return null!;
         }
         else {
-            return new AuthorDTO(author.Id, author.Name, author.Email, getCommitsAsDTOList(author.AllCommits));
+            return new AuthorDTO(author.Id, author.Name, getCommitsAsDTOList(author.AllCommits));
         }
     }
 
@@ -51,12 +51,11 @@ public class AuthorRepository : IAuthorRepository {
         if (entity is null) {
             return Response.NotFound;
         }
-        else if (_context.Authors.FirstOrDefaultAsync(a => a.Id != author.Id && a.Email == author.Email) != null) {
+        else if (_context.Authors.FirstOrDefaultAsync(a => a.Id != author.Id && a.Name == author.Name) != null) {
             return Response.Conflict;
         }
         else {
             entity.Name = author.Name;
-            entity.Email = author.Email;
             _context.SaveChanges();
             return Response.Updated;
         }
@@ -71,8 +70,6 @@ public class AuthorRepository : IAuthorRepository {
         _context.SaveChanges();
         return Response.Deleted;
     }
-
-    private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
 
     private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
 }

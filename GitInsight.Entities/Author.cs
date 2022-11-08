@@ -4,13 +4,10 @@ public class Author{
     public int Id {get; set;}
     public string Name {get; set;}
 
-    [EmailAddress]
-    public string Email {get; set;}
-    public ICollection<Commit> AllCommits {get; set;}
+    public virtual ICollection<Commit> AllCommits {get; set;}
 
-    public Author(string name, string email, ICollection<Commit> allCommits){
+    public Author(string name){
         Name = name;
-        Email = email;
-        AllCommits = allCommits;
+        AllCommits = new List<Commit>();
     }
 }

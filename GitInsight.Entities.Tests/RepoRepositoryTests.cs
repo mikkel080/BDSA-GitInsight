@@ -64,7 +64,7 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void Read_repo_count_1() {
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
 
@@ -78,7 +78,7 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void repo_find_found() {
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
         
@@ -104,7 +104,7 @@ public sealed class RepoRepositoryTests : IDisposable
     public void Update_repo_new_commits()
     {
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
 
@@ -121,7 +121,7 @@ public sealed class RepoRepositoryTests : IDisposable
     public void Update_repo_no_new_commits()
     {
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
 
@@ -137,13 +137,13 @@ public sealed class RepoRepositoryTests : IDisposable
     [Fact]
     public void Update_nonexistant_repo(){
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-        var author = new Author("name", "email", new List<Commit>());
+        var author = new Author("name");
         _context.Authors.Add(author);
         _context.SaveChanges();
-        var commit = new Commit(repo, author, new DateTime());
+        var commit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
 
         var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, getCommitsAsDTOList(repo.AllCommits));
 
@@ -158,7 +158,7 @@ public sealed class RepoRepositoryTests : IDisposable
     public void Delete_repo()
     {
         // Arrange
-        var repo = new Repo("name", 0, new List<Commit>());
+        var repo = new Repo("name", 0);
         _context.Repos.Add(repo);
         _context.SaveChanges();
 

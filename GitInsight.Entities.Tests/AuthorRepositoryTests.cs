@@ -15,6 +15,7 @@ public sealed class AuthorRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
+        var repo = new Repo("RepoName", 1);
 
         _context = context;
         _repository = new AuthorRepository(_context);
@@ -28,7 +29,7 @@ public sealed class AuthorRepositoryTests : IDisposable
     [Fact]
     public void Create_author_returns_created(){
         // Arrange
-        var newAuthorDTO = new AuthorCreateDTO("name", "email", new List<int>());
+        var newAuthorDTO = new AuthorCreateDTO("name", new List<int>());
 
         // Act
         var (response, newAuthorId) = _repository.Create(newAuthorDTO);
@@ -41,12 +42,10 @@ public sealed class AuthorRepositoryTests : IDisposable
     [Fact]
     public void Create_author_returns_conflict(){
         // Arrange
-        var anEmail = "email";
-        var firstAuthor = new Author("name_1", anEmail, new List<Commit>());
-        _context.Authors.Add(firstAuthor);
-        _context.SaveChanges();
+        var name = "name";
+        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
 
-        var secondAuthorDTO = new AuthorCreateDTO("name_2", anEmail, new List<int>());
+        var secondAuthorDTO = new AuthorCreateDTO("name_2", new List<int>());
 
         // Act
         var (response, secondAuthorId) = _repository.Create(secondAuthorDTO);
@@ -70,9 +69,7 @@ public sealed class AuthorRepositoryTests : IDisposable
     [Fact]
     public void Read_author_count_1() {
         // Arrange
-        var newAuthor = new Author("name", "email", new List<Commit>());
-        _context.Authors.Add(newAuthor);
-        _context.SaveChanges();
+        _repository.Create(new AuthorCreateDTO("name", new List<int>()));
 
         // Act
         var authorList = _repository.Read();
@@ -84,15 +81,14 @@ public sealed class AuthorRepositoryTests : IDisposable
     [Fact]
     public void Author_find_found() {
         // Arrange
-        Author author = new Author("name", "email", new List<Commit>());
-        _context.Authors.Add(author);
-        _context.SaveChanges();
+        var name = "name";
+        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
         
         // Act
         var authorInRepo = _repository.Find(1);
 
         // Assert()
-        Assert.Equal(new AuthorDTO(author.Id, author.Name, author.Email, new List<int>()), authorInRepo);
+        Assert.Equal(new AuthorDTO(1, name, new List<int>()), authorInRepo);
     }
 
     [Fact]
@@ -110,11 +106,10 @@ public sealed class AuthorRepositoryTests : IDisposable
     public void Update_existing_author()
     {
         // Arrange
-        var newauthor = new Author("name", "email", new List<Commit>());  
-        _context.Authors.Add(newauthor);
-        _context.SaveChanges();  
+        var name = "name";
+        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
 
-        var authorUpdate = new AuthorUpdateDTO(1, "name", "email", new List<int>());
+        var authorUpdate = new AuthorUpdateDTO(1, name, new List<int>());
 
         // Act
         var response = _repository.Update(authorUpdate);
@@ -126,7 +121,7 @@ public sealed class AuthorRepositoryTests : IDisposable
     [Fact]
     public void Update_non_existing_author(){
         // Arrange
-        var author = new AuthorUpdateDTO(100, "name", "email", new List<int>());
+        var author = new AuthorUpdateDTO(100, "name", new List<int>());
 
         // Act
         var response = _repository.Update(author);
@@ -139,7 +134,7 @@ public sealed class AuthorRepositoryTests : IDisposable
     public void Delete_author()
     {
         // Arrange
-        var newAuthor = new Author("name", "email", new List<Commit>());
+        var newAuthor = new Author("name");
         _context.Authors.Add(newAuthor);
         _context.SaveChanges();
 

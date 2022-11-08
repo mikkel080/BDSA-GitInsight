@@ -1,6 +1,7 @@
 ﻿namespace GitInsight;
 
 using LibGit2Sharp;
+
 public class Program {
     public static void Main(string[] args){
         using (var repo = new Repository(args[0])){

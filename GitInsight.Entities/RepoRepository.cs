@@ -16,7 +16,7 @@ public class RepoRepository : IRepoRepository {
 
         if (newRepo is null)
         {
-            newRepo = new Repo(repo.Name, repo.LatestCommit, getCommitsList(repo.AllCommits));
+            newRepo = new Repo(repo.Name, repo.LatestCommit);
             _context.Repos.Add(newRepo);
             _context.SaveChanges();
         }

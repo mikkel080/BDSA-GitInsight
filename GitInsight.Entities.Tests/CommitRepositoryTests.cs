@@ -24,18 +24,18 @@ public sealed class CommitRepositoryTests : IDisposable
     [Fact]
     public void Create_commit_returns_created(){
         // Arrange
-        var repo = new Repo("name", 1, new List<Commit>());
+        var repo = new Repo("name", 1);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-        var author = new Author("name", "email", new List<Commit>());
-        _context.Authors.Add(author);
-        _context.SaveChanges();
-        var newcommitDTO = new CommitCreateDTO(1, 1, new DateTime());
+       
+ 
+        var newcommitDTO = new CommitCreateDTO(1, "nameAuthor", new DateTime());
 
         // Act
         var (response, newCommitId) = _repository.Create(newcommitDTO);
 
         // Assert
+        _context.Authors.Find("nameAuthor").Should().Be(new Author("name"));
         Assert.Equal(Response.Created, response);
         Assert.Equal(1, newCommitId);
     }
@@ -43,7 +43,7 @@ public sealed class CommitRepositoryTests : IDisposable
     [Fact]
     public void Create_commit_returns_conflict(){
         // Arrange
-        var firstCommitDTO = new CommitCreateDTO(1, 1, new DateTime());
+        var firstCommitDTO = new CommitCreateDTO(1, "name", new DateTime());
 
         // Act
         var (response, firstCommitId) = _repository.Create(firstCommitDTO);
@@ -67,13 +67,13 @@ public sealed class CommitRepositoryTests : IDisposable
     [Fact]
     public void Read_commit_count_1() {
         // Arrange
-        var repo = new Repo("name", 1, new List<Commit>());
+        var repo = new Repo("name", 1);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-        var author = new Author("name", "email", new List<Commit>());
+        var author = new Author("name");
         _context.Authors.Add(author);
         _context.SaveChanges();
-        var newCommit = new Commit(repo, author, new DateTime());
+        var newCommit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
         _context.Commits.Add(newCommit);
         _context.SaveChanges();
 
@@ -87,13 +87,13 @@ public sealed class CommitRepositoryTests : IDisposable
     [Fact]
     public void Commit_find_found() {
         // Arrange
-        var repo = new Repo("name", 1, new List<Commit>());
+        var repo = new Repo("name", 1);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-        var author = new Author("name", "email", new List<Commit>());
+        var author = new Author("name");
         _context.Authors.Add(author);
         _context.SaveChanges();
-        var commit = new Commit(repo, author, new DateTime());
+        var commit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
         _context.Commits.Add(commit);
         _context.SaveChanges();
         
@@ -119,13 +119,13 @@ public sealed class CommitRepositoryTests : IDisposable
     public void Delete_commit()
     {
         // Arrange
-        var repo = new Repo("name", 1, new List<Commit>());
+        var repo = new Repo("name", 1);
         _context.Repos.Add(repo);
         _context.SaveChanges();
-        var author = new Author("name", "email", new List<Commit>());
+        var author = new Author("name");
         _context.Authors.Add(author);
         _context.SaveChanges();
-        var commit = new Commit(repo, author, new DateTime());
+        var commit = new Commit() {Repo = repo, Author = author, Date = new DateTime()};
         _context.Commits.Add(commit);
         _context.SaveChanges();
 
