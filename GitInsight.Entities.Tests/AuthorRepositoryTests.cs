@@ -4,9 +4,7 @@ public sealed class AuthorRepositoryTests : IDisposable
 {
     private readonly GitInsightContext _context;
     private readonly AuthorRepository _repository;
-
     private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
-
     private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
     public AuthorRepositoryTests() {
         var connection = new SqliteConnection("Filename=:memory:");
@@ -45,14 +43,13 @@ public sealed class AuthorRepositoryTests : IDisposable
         var name = "name";
         _repository.Create(new AuthorCreateDTO(name, new List<int>()));
 
-        var secondAuthorDTO = new AuthorCreateDTO("name_2", new List<int>());
+        var secondAuthorDTO = new AuthorCreateDTO(name, new List<int>());
 
         // Act
         var (response, secondAuthorId) = _repository.Create(secondAuthorDTO);
 
         // Assert
         response.Should().Be(Response.Conflict);
-        secondAuthorId.Should().Be(1);
     }
 
     [Fact]
@@ -88,7 +85,8 @@ public sealed class AuthorRepositoryTests : IDisposable
         var authorInRepo = _repository.Find(1);
 
         // Assert()
-        Assert.Equal(new AuthorDTO(1, name, new List<int>()), authorInRepo);
+        Assert.Equal(authorInRepo.Id, 1);
+        Assert.Equal(authorInRepo.Name, "name");
     }
 
     [Fact]

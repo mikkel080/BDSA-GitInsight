@@ -69,5 +69,5 @@ public class AuthorRepository : IAuthorRepository {
         return Response.Deleted;
     }
 
-    private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
+    private static ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
 }
