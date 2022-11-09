@@ -5,12 +5,17 @@ public class ModeTest
     string path;
     Program program;
 
-    public ModeTest(){
+    public ModeTest()
+    {
         path = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
         program = new Program();
-        if(path.Contains(@"\")){
+
+        if(path.Contains(@"\"))
+        {
             path = path+@"\testrepo.git";
-        }else{
+        }
+        else
+        {
             path = path+@"/testrepo.git";
         }
     }
@@ -18,7 +23,6 @@ public class ModeTest
     [Fact]
     public void CommitFrequency()
     {
-
         var output = program.Run(path, "F");
 
         output.Should().Contain("1 2011-04-14");
@@ -27,8 +31,6 @@ public class ModeTest
     [Fact]
     public void CommitAuthor()
     {
-       
-
         var output =  program.Run(path, "A");
 
         output.Should().Contain("Scott Chacon");
