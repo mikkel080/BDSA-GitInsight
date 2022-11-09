@@ -13,7 +13,7 @@ public sealed class AuthorRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
-        var repo = new Repo("RepoName", 1);
+        var repo = new Repo("RepoName");
 
         _context = context;
         _repository = new AuthorRepository(_context);
@@ -33,8 +33,8 @@ public sealed class AuthorRepositoryTests : IDisposable
         var (response, newAuthorId) = _repository.Create(newAuthorDTO);
 
         // Assert
-        Assert.Equal(Response.Created, response);
-        Assert.Equal(1, newAuthorId);
+        response.Should().Be(Response.Created);
+        newAuthorId.Should().Be(1);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public sealed class AuthorRepositoryTests : IDisposable
         var authorList = _repository.Read();
 
         // Assert
-        Assert.True(authorList.Count() == 0);
+        authorList.Count().Should().Be(0);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public sealed class AuthorRepositoryTests : IDisposable
         var authorList = _repository.Read();
 
         // Assert
-        Assert.True(authorList.Count() == 1);
+        authorList.Count().Should().Be(1);
     }
 
     [Fact]
@@ -84,9 +84,9 @@ public sealed class AuthorRepositoryTests : IDisposable
         // Act
         var authorInRepo = _repository.Find(1);
 
-        // Assert()
-        Assert.Equal(authorInRepo.Id, 1);
-        Assert.Equal(authorInRepo.Name, "name");
+        // Assert
+        authorInRepo.Id.Should().Be(1);
+        authorInRepo.Name.Should().BeEquivalentTo("name");
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class AuthorRepositoryTests : IDisposable
         var author = _repository.Find(100);
 
         // Assert
-        Assert.Null(author);
+        author.Should().BeNull();
     }
 
     [Fact]

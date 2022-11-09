@@ -7,9 +7,9 @@ public class Repo{
     public int LatestCommit {get; set;} 
     public virtual ICollection<Commit> AllCommits {get; set;} 
 
-    public Repo(string name, int latestCommit){
+    public Repo(string name){
         Name = name;
-        LatestCommit = latestCommit;
+        LatestCommit = 0;
         AllCommits = new List<Commit>();
     }
 }

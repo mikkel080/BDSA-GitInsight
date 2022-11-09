@@ -16,7 +16,7 @@ public class RepoRepository : IRepoRepository {
 
         if (newRepo is null)
         {
-            newRepo = new Repo(repo.Name, repo.LatestCommit);
+            newRepo = new Repo(repo.Name);
             _context.Repos.Add(newRepo);
             _context.SaveChanges();
         }
@@ -54,26 +54,22 @@ public class RepoRepository : IRepoRepository {
         {
             return Response.NotFound;
         }
+        else if (repoUpdate.AllCommits.Count <= repo.AllCommits.Count) 
+        {
+            return Response.Conflict;
+        }
         else
         {
             //Merges two lists without duplicates
             var newList = getCommitsList(repoUpdate.AllCommits).ToList().Union(repo.AllCommits).ToList();
             
-            if (repoUpdate.AllCommits.Count <= repo.AllCommits.Count) 
-            {
-                return Response.Conflict;
-            }
-            else
-            {
-                //Saves the new list to a merged and ordered by date list
-                repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
+            //Saves the new list to a merged and ordered by date list
+            repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
                 
-                repo.LatestCommit = repo.LatestCommit;
-                _context.SaveChanges();
+            repo.LatestCommit = repo.AllCommits.Last().Id;
+            _context.SaveChanges();
                     
-                return Response.Updated;
-            }
-            
+            return Response.Updated;
         }
     }
 

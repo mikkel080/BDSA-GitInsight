@@ -11,10 +11,9 @@ public class CommitRepository : ICommitRepository {
     }
 
      public (Response Response, int CommitID) Create(CommitCreateDTO commit) {
-        var author = _context.Authors.FirstOrDefault(a => a.Name == commit.AuthorName);
         var repo = _context.Repos.FirstOrDefault(r => r.Id == commit.RepoID);
 
-        if (author is null || repo is null){
+        if (repo is null){
             return (Response.Conflict, -1);
         }
 
@@ -59,6 +58,6 @@ public class CommitRepository : ICommitRepository {
         return Response.Deleted;
     }
 
-    private Author FindOrCreateAuthor(string name) => _context.Authors.FirstOrDefault(a => a.Name == name) == null ? new Author(name) : _context.Authors.First(a => a.Name == name);
+    private Author FindOrCreateAuthor(string name) => _context.Authors.Where(a => a.Name == name).FirstOrDefault() ?? new Author(name);
 
 }

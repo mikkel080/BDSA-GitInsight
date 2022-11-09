@@ -12,7 +12,9 @@ public sealed class CommitRepositoryTests : IDisposable
         builder.UseSqlite(connection);
         var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
-
+        var repo = new Repo("name");
+        context.Repos.Add(repo);
+        context.SaveChanges();
         _context = context;
         _repository = new CommitRepository(_context);
     }
@@ -23,34 +25,34 @@ public sealed class CommitRepositoryTests : IDisposable
 
     [Fact]
     public void Create_commit_returns_created(){
-        // Arrange
-        var repo = new Repo("name", 1);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-       
- 
+      
+        //Arrange
         var newcommitDTO = new CommitCreateDTO(1, "nameAuthor", new DateTime());
 
         // Act
         var (response, newCommitId) = _repository.Create(newcommitDTO);
+        var newAuthor = (from a in _context.Authors
+                        where a.Name == newcommitDTO.AuthorName
+                        select a).First();
 
         // Assert
-        _context.Authors.Find("nameAuthor").Should().Be(new Author("name"));
-        Assert.Equal(Response.Created, response);
-        Assert.Equal(1, newCommitId);
+        newAuthor.Id.Should().Be(1);
+        response.Should().Be(Response.Created);
+        newCommitId.Should().Be(1);
+        _context.Repos.Where(r => r.Id == 1).First().AllCommits.Count().Should().Be(1);
     }
 
     [Fact]
     public void Create_commit_returns_conflict(){
         // Arrange
-        var firstCommitDTO = new CommitCreateDTO(1, "name", new DateTime());
+        var firstCommitDTO = new CommitCreateDTO(2, "name", new DateTime());
 
         // Act
         var (response, firstCommitId) = _repository.Create(firstCommitDTO);
 
         // Assert
         response.Should().Be(Response.Conflict);
-        firstCommitId.Should().Be(1);
+        firstCommitId.Should().Be(-1);
     }
 
     [Fact]
@@ -61,47 +63,34 @@ public sealed class CommitRepositoryTests : IDisposable
         var commitList = _repository.Read();
 
         // Assert
-        Assert.True(commitList.Count() == 0);
+        commitList.Count().Should().Be(0);
     }
 
     [Fact]
     public void Read_commit_count_1() {
         // Arrange
-        var repo = new Repo("name", 1);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-        var author = new Author("name");
-        _context.Authors.Add(author);
-        _context.SaveChanges();
-        var newCommit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
-        _context.Commits.Add(newCommit);
-        _context.SaveChanges();
+
+        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
 
         // Act
         var commitList = _repository.Read();
 
         // Assert
-        Assert.True(commitList.Count() == 1);
+        commitList.Count().Should().Be(1);
     }
 
     [Fact]
     public void Commit_find_found() {
         // Arrange
-        var repo = new Repo("name", 1);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-        var author = new Author("name");
-        _context.Authors.Add(author);
-        _context.SaveChanges();
-        var commit = new Commit(){Repo = repo, Author = author, Date = new DateTime()};
-        _context.Commits.Add(commit);
-        _context.SaveChanges();
+        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
         
         // Act
         var commitInRepo = _repository.Find(1);
 
-        // Assert()
-        Assert.Equal(new CommitDTO(commit.Id, commit.Repo.Name, commit.Author.Name, new DateTime()), commitInRepo);
+        // Assert
+        commitInRepo.Id.Should().Be(1);
+        commitInRepo.RepoName.Should().Be("name");
+        commitInRepo.AuthorName.Should().Be("name");
     }
 
     [Fact]
@@ -112,22 +101,14 @@ public sealed class CommitRepositoryTests : IDisposable
         var commit = _repository.Find(100);
 
         // Assert
-        Assert.Null(commit);
+        commit.Should().BeNull();
     }
 
     [Fact]
     public void Delete_commit()
     {
         // Arrange
-        var repo = new Repo("name", 1);
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-        var author = new Author("name");
-        _context.Authors.Add(author);
-        _context.SaveChanges();
-        var commit = new Commit() {Repo = repo, Author = author, Date = new DateTime()};
-        _context.Commits.Add(commit);
-        _context.SaveChanges();
+        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
 
         // Act
         var response = _repository.Delete(1);
