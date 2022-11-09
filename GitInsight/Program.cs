@@ -74,6 +74,9 @@ public sealed class Program {
     }
     int SaveTheData(Repository repo){
         var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(repo.Info.Path, new List<int>()));
+        if (repoId == -1){
+            return _repositoryRepos.Read().Where(r => r.Name == repo.Info.Path).First().Id;
+        }
         foreach (var commit in repo.Commits.ToList()) {
             _repositoryCommit.Create(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.Date));
         }
