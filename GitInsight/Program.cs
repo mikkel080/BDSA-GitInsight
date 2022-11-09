@@ -63,10 +63,11 @@ public sealed class Program {
         foreach (var commit in q)
         {
             stringList.Add(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
+
         }
         return stringList;
     }
-
+    
      List<string> AuthorMode(IEnumerable<CommitDTO> list)
      {
         var stringList = new List<string>();
@@ -85,6 +86,7 @@ public sealed class Program {
         }
         return stringList;
     }
+    
     int SaveTheData(Repository repo)
     {
         var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(repo.Info.Path, new List<int>()));

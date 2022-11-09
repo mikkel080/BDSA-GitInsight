@@ -17,6 +17,7 @@ public class ModeTest
         else
         {
             path = path+@"/testrepo.git";
+
         }
     }
 
