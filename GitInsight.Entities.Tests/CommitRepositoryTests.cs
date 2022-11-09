@@ -89,7 +89,7 @@ public sealed class CommitRepositoryTests : IDisposable
 
         // Assert
         commitInRepo.Id.Should().Be(1);
-        commitInRepo.RepoName.Should().Be("name");
+        commitInRepo.RepoId.Should().Be(1);
         commitInRepo.AuthorName.Should().Be("name");
     }
 

@@ -2,49 +2,81 @@
 
 using LibGit2Sharp;
 
-public class Program {
-    public static void Main(string[] args){
-        using (var repo = new Repository(args[0])){
-            var commits = repo.Commits.ToList();
-            
-            if(args.Count() <2){
-                return;
-            }
-            if(args[1] == "A"){
-                AuthorMode(commits);
-            }else if(args[1] == "F"){
-                FrequencyMode(commits);
-            }else{
-                return;
-            }
-        }
+public sealed class Program {    
+    private readonly GitInsightContext _context;
+    private readonly AuthorRepository _repositoryAuthor;
+    private readonly CommitRepository _repositoryCommit;
+    private readonly RepoRepository _repositoryRepos;
+
+    public Program()
+    {
+        var connection = new SqliteConnection("Filename=:memory:");
+        connection.Open();
+        var builder = new DbContextOptionsBuilder<GitInsightContext>();
+        builder.UseSqlite(connection);
+        var context = new GitInsightContext(builder.Options);
+        context.Database.EnsureCreated();
+
+        _context = context;
+        _repositoryAuthor = new AuthorRepository(_context);
+        _repositoryCommit = new CommitRepository(_context);
+        _repositoryRepos = new RepoRepository(_context);
     }
 
-    static void FrequencyMode(IEnumerable<Commit> list, String prefix = ""){
-        var q = list.GroupBy(
-            (item => item.Author.When.Date),
+    public string Run(string path, string mode){
+        string output = "";
+        using (var repo = new Repository(path)){
+            var repoId = SaveTheData(repo);
+            var commits = _repositoryCommit.Read().Where(c => c.RepoId == repoId).ToList();
+            
+            if(mode.Contains("A")){
+                foreach (var c in AuthorMode(commits)){
+                    output += c + "\n";
+                }
+            }else if(mode.Contains("F")){
+                foreach (var c in FrequencyMode(commits)){
+                    output += c + "\n";
+                }
+            }
+            return output;
+        }  
+    }
+
+    List<string> FrequencyMode(IEnumerable<CommitDTO> list, String prefix = ""){
+        var stringList = new List<string>();
+        var q =  list.GroupBy(
+            (item => item.Date),
             (key, elements) => new {
                 key = key, 
                 count = elements.Distinct().Count()
             }
         );
         foreach (var commit in q){
-            Console.WriteLine(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
+            stringList.Add(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
         }
+        return stringList;
     }
 
-    static void AuthorMode(IEnumerable<Commit> list){
+     List<string> AuthorMode(IEnumerable<CommitDTO> list){
+        var stringList = new List<string>();
         var q = list.GroupBy(
-            (item => item.Author.Name),
+            (item => item.AuthorName),
             (key, elements) => new {
                 key = key,
                 items = elements
             }
         );
         foreach (var commit in q){
-            Console.WriteLine(commit.key);
-            FrequencyMode(commit.items, "\t");
-            Console.WriteLine();
+            stringList.Add(commit.key);
+            stringList.AddRange(FrequencyMode(commit.items, "\t"));
         }
+        return stringList;
+    }
+    int SaveTheData(Repository repo){
+        var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(repo.Info.Path, new List<int>()));
+        foreach (var commit in repo.Commits.ToList()) {
+            _repositoryCommit.Create(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.Date));
+        }
+        return repoId;
     }
 }

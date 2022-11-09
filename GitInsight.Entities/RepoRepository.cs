@@ -65,8 +65,7 @@ public class RepoRepository : IRepoRepository {
             
             //Saves the new list to a merged and ordered by date list
             repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
-                
-            repo.LatestCommit = repo.AllCommits.Last().Id;
+        
             _context.SaveChanges();
                     
             return Response.Updated;

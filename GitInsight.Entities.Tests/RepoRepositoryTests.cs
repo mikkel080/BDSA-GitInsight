@@ -176,4 +176,13 @@ public sealed class RepoRepositoryTests : IDisposable
         // Assert
         response.Should().Be(Response.NotFound);
     }
+
+    [Fact]
+    public void commit_added_to_repo_latest_commit(){
+
+        _context.Commits.Add(new Commit{RepoID = 1, AuthorID = 1, Date = DateTime.Now.AddHours(1)});
+        _context.SaveChanges();
+
+        _repository.Find(1).LatestCommit.Should().Be(3);
+    }
 }

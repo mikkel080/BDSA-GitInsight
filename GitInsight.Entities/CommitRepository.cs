@@ -29,7 +29,7 @@ public class CommitRepository : ICommitRepository {
 
     public IReadOnlyCollection<CommitDTO> Read(){
         var commits = from c in _context.Commits
-                        select new CommitDTO(c.Id, c.Repo.Name, c.Author.Name, c.Date);
+                        select new CommitDTO(c.Id, c.Repo.Id, c.Author.Name, c.Date);
         return commits.ToList();
     }
     
@@ -41,7 +41,7 @@ public class CommitRepository : ICommitRepository {
             return null!;
         }
         else {
-            return new CommitDTO(commit.Id, commit.Repo.Name, commit.Author.Name, commit.Date);
+            return new CommitDTO(commit.Id, commit.Repo.Id, commit.Author.Name, commit.Date);
         }
     }
 

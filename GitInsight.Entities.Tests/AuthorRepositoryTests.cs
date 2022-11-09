@@ -4,8 +4,6 @@ public sealed class AuthorRepositoryTests : IDisposable
 {
     private readonly GitInsightContext _context;
     private readonly AuthorRepository _repository;
-    private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
-    private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
     public AuthorRepositoryTests() {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
