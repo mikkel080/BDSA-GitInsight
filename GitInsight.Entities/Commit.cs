@@ -8,5 +8,10 @@ public class Commit {
     public virtual Author Author {get; set;} 
     public DateTime Date {get; set;} 
 
-
+    /*Ugly fix to avoid null warning from Repo and Author
+    Link to issue https://github.com/dotnet/efcore/issues/12078 */
+    public Commit() {
+        Author = default!;
+        Repo = default!;
+    }
 }
