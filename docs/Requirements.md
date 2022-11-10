@@ -2,10 +2,10 @@
 
 ## Functional Requirements
 
-* The program must read a path to a local directory containing a Git repo
-* The program must read a path to a remote GitHub repo
-* The program must maintain a local version of the remote repo that is updated or created when needed
-* The program must be able to collect all commits, author names, and author dates from a repo
+* The program must read a path to a local directory containing a Git repository
+* The program must read a path to a remote GitHub repository
+* The program must maintain a local, secret, version of the remote repository that is updated or created when needed
+* The program must be able to collect all commits, author names, and author dates from a repository
 * The program must have two modes, commit frequency mode, and commit author mode
 * Commit frequency mode must list the number of commits per day
 * Commit author mode must list the number of commits per day per author
@@ -13,7 +13,7 @@
 * The program must store results of analysis in a database
 * The content of the database must be updated to the most current analysis result
 * The database must store information about the analyzed repositories and their state
-* The program must use the database to expedite processing of repos
+* The program must use the database to expedite processing of repositorys
 * The program must expose a REST / RESTful API
 * The REST API must supply JSON Objects
 
