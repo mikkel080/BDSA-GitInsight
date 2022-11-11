@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using BDSA_GitInsight.Data;
+using GitInsight.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

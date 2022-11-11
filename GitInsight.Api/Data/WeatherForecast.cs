@@ -1,4 +1,4 @@
-namespace BDSA_GitInsight.Data;
+namespace GitInsight.Api.Data;
 
 public class WeatherForecast
 {
