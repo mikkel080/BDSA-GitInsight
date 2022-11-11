@@ -12,14 +12,15 @@ The program is run with arguments that is then parsed to determine which of the 
 
 <!-- Write text outside this comment, and remember to follow the structure / expand as needed -->
 
-#### Mode 1 Frequency
+#### Mode 1: Frequency
 
-static void FrequencyMode(IEnumerable<Commit> list, String prefix = "")
+`static void FrequencyMode(IEnumerable<Commit> list, String prefix = "")`
 
-Take a list of commits that is fetched using LibGitToSharp, and a custom prefix can be included though it has a default of an empty string.
+Takes a list of commits that is fetched using `LibGitToSharp` and a custom prefix can be included though it has a default of an empty string.
 
-#### Mode 2 Author
-static void AuthorMode(IEnumerable<Commit> list)
+#### Mode 2: Author
+
+`static void AuthorMode(IEnumerable<Commit> list)`
 
 Take a list of commits that is fetched using LibGitToSharp
 
@@ -27,6 +28,7 @@ Take a list of commits that is fetched using LibGitToSharp
 
 ### Tests
 
-The tests run against a repo that is bundled in the Tests project, this makes the test consistent and not dependant on outside directories.
+A test suit is included with the program.
+A sample git directory is included with the program tests, to facilitate testing and verification.
 
 ### GitHub?
