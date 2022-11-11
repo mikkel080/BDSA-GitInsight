@@ -26,9 +26,18 @@ Take a list of commits that is fetched using LibGitToSharp
 
 ### Database
 
+<!-- Document what the database contains, and when it is updated. 
+Also write that it is an in-memory database and is not persistent -->
+
 ### Tests
 
 A test suit is included with the program.
 A sample git directory is included with the program tests, to facilitate testing and verification.
 
+<!-- Test-coverage, unit test, end to end test-->
+
+### Quality Managment
+
 ### GitHub?
+
+### Architecture
