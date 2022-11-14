@@ -8,25 +8,40 @@ public sealed class Program {
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
 
-    public Program()
+    public Program(GitInsightContext context)
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<GitInsightContext>();
-        builder.UseSqlite(connection);
-        var context = new GitInsightContext(builder.Options);
-        context.Database.EnsureCreated();
-
         _context = context;
         _repositoryAuthor = new AuthorRepository(_context);
         _repositoryCommit = new CommitRepository(_context);
         _repositoryRepos = new RepoRepository(_context);
     }
 
-    public string Run(string path, string mode)
+    public string getPathOrCloneRepo(string githubName, string repoName)
+    {
+        //Temp folders does not get deleted themselves so remember to delete
+        var path = Path.GetTempPath();
+        string existingPath;
+        if(path.Contains(@"\"))
+        {
+            existingPath = path+@$"\{repoName}";
+        }
+        else
+        {
+            existingPath = path+@$"/{repoName}";
+
+        }
+        if (!Directory.Exists(existingPath))
+        {
+           return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
+        }      
+        
+       return existingPath;
+    }
+
+    public string Run(string githubName, string repoName, string mode)
     {
         string output = "";
-        using (var repo = new Repository(path))
+        using (var repo = new Repository(getPathOrCloneRepo(githubName, repoName)))
         {
             var repoId = SaveTheData(repo);
             var commits = _repositoryCommit.Read().Where(c => c.RepoId == repoId).ToList();
@@ -49,7 +64,7 @@ public sealed class Program {
         }  
     }
 
-    List<string> FrequencyMode(IEnumerable<CommitDTO> list, String prefix = "")
+    List<string> FrequencyMode(IEnumerable<CommitDTO> list, string prefix = "")
     {
         var stringList = new List<string>();
         var q =  list.GroupBy(
