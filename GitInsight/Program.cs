@@ -3,7 +3,8 @@
 using LibGit2Sharp;
 
 
-public sealed class Program {    
+public sealed class Program
+{
     private readonly GitInsightContext _context;
     private readonly AuthorRepository _repositoryAuthor;
     private readonly CommitRepository _repositoryCommit;
@@ -22,21 +23,21 @@ public sealed class Program {
         //Temp folders does not get deleted themselves so remember to delete
         var path = Path.GetTempPath();
         string existingPath;
-        if(path.Contains(@"\"))
+        if (path.Contains(@"\"))
         {
-            existingPath = path+@$"\{repoName}";
+            existingPath = path + @$"\{repoName}";
         }
         else
         {
-            existingPath = path+@$"/{repoName}";
+            existingPath = path + @$"/{repoName}";
 
         }
         if (!Directory.Exists(existingPath))
         {
-           return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
-        }      
-        
-       return existingPath;
+            return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
+        }
+
+        return existingPath;
     }
 
     public string Run(string githubName, string repoName)
@@ -45,15 +46,15 @@ public sealed class Program {
         {
             var repoId = SaveOrUpdateTheData(repo, repoName);
             var commits = _repositoryCommit.Read().Where(c => c.RepoId == repoId).ToList();
- 
+
             //Cursed but easy way
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
 
             return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!), Formatting.Indented);
-            
-        }  
+
+        }
     }
-    
+
     int SaveOrUpdateTheData(Repository repo, string RepoName)
     {
         var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(RepoName, new List<int>()));
@@ -61,7 +62,7 @@ public sealed class Program {
         {
             return _repositoryRepos.Read().Where(r => r.Name == repo.Info.Path).First().Id;
         }
-        foreach (var commit in repo.Commits.ToList()) 
+        foreach (var commit in repo.Commits.ToList())
         {
             _repositoryCommit.Create(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.Date));
         }

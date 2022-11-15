@@ -1,24 +1,25 @@
 namespace GitInsight.Entities;
 
-public class FrequencyResult{
-    public IEnumerable<EntryF> Data {get;}
-    public string RepoName{get;}
+public class FrequencyResult
+{
+    public IEnumerable<EntryF> Data { get; }
+    public string RepoName { get; }
     public FrequencyResult(IEnumerable<Commit> list, string RepoName)
     {
         Data = new List<EntryF>();
         this.RepoName = RepoName;
-        var q =  list.GroupBy(
+        var q = list.GroupBy(
             (item => item.Date),
-            (key, elements) => new 
+            (key, elements) => new
             {
-                key = key, 
+                key = key,
                 count = elements.Distinct().Count()
             }
         );
-        
+
         foreach (var commit in q)
         {
-           Data = Data.Append(new EntryF(commit.count, commit.key));
+            Data = Data.Append(new EntryF(commit.count, commit.key));
         }
     }
 
@@ -27,8 +28,8 @@ public class FrequencyResult{
         var strings = new List<String>();
         foreach (var item in Data)
         {
-            strings.Append(item.Count +" "+item.Date.ToString(@"yyyy-MM-dd"));
-        } 
+            strings.Append(item.Count + " " + item.Date.ToString(@"yyyy-MM-dd"));
+        }
         return strings;
     }
 }

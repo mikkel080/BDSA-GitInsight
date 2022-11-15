@@ -8,7 +8,8 @@ public sealed class RepoRepositoryTests : IDisposable
     private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
 
     private ICollection<int> getCommitsAsDTOList(ICollection<Commit> commits) => commits.Select(c => c.Id).ToList();
-    public RepoRepositoryTests() {
+    public RepoRepositoryTests()
+    {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<GitInsightContext>();
@@ -18,8 +19,8 @@ public sealed class RepoRepositoryTests : IDisposable
 
         var author = new Author("AuthorName");
         var repo = new Repo("RepoName");
-        var commit = new Commit(){Repo = repo, Author = author, Date = DateTime.Now};
-        var commit2 = new Commit(){Repo = repo, Author = author, Date = DateTime.Now.AddMilliseconds(10)};
+        var commit = new Commit() { Repo = repo, Author = author, Date = DateTime.Now };
+        var commit2 = new Commit() { Repo = repo, Author = author, Date = DateTime.Now.AddMilliseconds(10) };
         context.Authors.Add(author);
         context.Repos.Add(repo);
         context.Commits.AddRange(commit, commit2);
@@ -31,10 +32,11 @@ public sealed class RepoRepositoryTests : IDisposable
     public void Dispose()
     {
         _context.Dispose();
-    } 
+    }
 
     [Fact]
-    public void Create_repo_returns_created(){
+    public void Create_repo_returns_created()
+    {
         // Arrange
         var repo = new RepoCreateDTO("name", new List<int>());
         // Act
@@ -46,7 +48,8 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_repo_returns_conflict(){
+    public void Create_repo_returns_conflict()
+    {
         // Arrange
         var repo_1 = new RepoCreateDTO("name", new List<int>());
         var repo_2 = new RepoCreateDTO("name", new List<int>());
@@ -60,7 +63,8 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_repo_count_0() {
+    public void Read_repo_count_0()
+    {
         // Arrange
         _repository.Delete(1);
         // Act
@@ -71,7 +75,8 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_repo_count_1() {
+    public void Read_repo_count_1()
+    {
         // Act
         var repoList = _repository.Read();
 
@@ -80,10 +85,11 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void repo_find_found() {
+    public void repo_find_found()
+    {
         // Arrange
         _repository.Create(new RepoCreateDTO("name", new List<int>()));
-        
+
         // Act
         var repoInRepo = _repository.Find(2);
 
@@ -93,9 +99,10 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void repo_find_not_found() {
+    public void repo_find_not_found()
+    {
         // Arrange
-        
+
         // Act
         var repo = _repository.Find(100);
 
@@ -108,7 +115,7 @@ public sealed class RepoRepositoryTests : IDisposable
     {
         // Arrange
         _repository.Create(new RepoCreateDTO("name", new List<int>()));
-        var repoUpdate = new RepoUpdateDTO(2, "name", 0, new List<int>(){1, 2});
+        var repoUpdate = new RepoUpdateDTO(2, "name", 0, new List<int>() { 1, 2 });
 
         // Act
         var response = _repository.Update(repoUpdate);
@@ -121,10 +128,11 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Update_nonexistant_repo(){
+    public void Update_nonexistant_repo()
+    {
         // Arrange
 
-        var repoUpdate = new RepoUpdateDTO(100, "name", 0, new List<int>(){2});
+        var repoUpdate = new RepoUpdateDTO(100, "name", 0, new List<int>() { 2 });
 
         // Act
         var response = _repository.Update(repoUpdate);
@@ -161,9 +169,10 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void commit_added_to_repo_latest_commit(){
+    public void commit_added_to_repo_latest_commit()
+    {
 
-        _context.Commits.Add(new Commit{RepoID = 1, AuthorID = 1, Date = DateTime.Now.AddHours(1)});
+        _context.Commits.Add(new Commit { RepoID = 1, AuthorID = 1, Date = DateTime.Now.AddHours(1) });
         _context.SaveChanges();
 
         _repository.Find(1).LatestCommit.Should().Be(3);

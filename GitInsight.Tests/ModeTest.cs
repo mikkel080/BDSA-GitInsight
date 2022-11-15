@@ -27,7 +27,7 @@ public class ModeTest
     [Fact]
     public void CommitAuthor()
     {
-        var output =  program.Run("Miniim98", "Assignment00_BDSA_2022");
+        var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
 
         output.Should().Contain("Amalie (amdh)");
         output.Should().Contain("2022-09-04T00:00:00");
@@ -37,7 +37,7 @@ public class ModeTest
     [Fact]
     public void test_if_string_is_json()
     {
-        var output =  program.Run("Miniim98", "Assignment00_BDSA_2022");
+        var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
         JsonConvert.DeserializeObject(output).Should().NotBe(null);
 
     }
