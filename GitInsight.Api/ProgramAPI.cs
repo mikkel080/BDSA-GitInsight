@@ -21,6 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapGet("/", () => "Write GitHub username and GitHub repo name in the url!");
 app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitInsightContext context) => {
     var program = new GitInsight.Program(context);
     return program.Run(GithubName, RepoName, "A");
