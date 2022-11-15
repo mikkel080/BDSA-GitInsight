@@ -12,6 +12,10 @@
 * The program must store and update analysis results in a persistent database
 * The program must use the database to expedite processing of repositories
 * The program must expose a RESTful WEB API, that supplies JSON Objects
+* The program must contain a front-end web-application
+* The front-end must enable the user to analyze remote repositories
+* The front-end must display illustrations that gives relevant insights into the repository
+* The program must be able to list every repository that forks from the analyzed repository
 
 ## Non-functional Requirements
 
@@ -22,9 +26,12 @@
 * The program must be easy to change and maintain
 * The documentation must be written in English
 * Diagrams in the documentation must be written using UML
+* The documentation must be kept up to date
 * The development must use CI/CD principles
 * The development must use branch protection and pull requests to enable successful changes
 * All changes to the program must be done using Pull Requests
 * Changes must be approved by another team member
 * The test suite of the program must be kept up to date
 * The programs dependencies, including runtime, must be kept up to date
+* The front-end must be written with .Net Blazor
+* The program must not contain any API keys or other secrets
