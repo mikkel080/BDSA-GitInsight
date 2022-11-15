@@ -1,6 +1,7 @@
 namespace GitInsight.Core;
 
-public interface IRepoRepository{
+public interface IRepoRepository
+{
     (Response Response, int RepoID) Create(RepoCreateDTO repo);
     IReadOnlyCollection<RepoDTO> Read();
     RepoDTO Find(int repoId);

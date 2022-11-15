@@ -2,102 +2,74 @@
 
 using LibGit2Sharp;
 
-public sealed class Program {    
+
+public sealed class Program
+{
     private readonly GitInsightContext _context;
     private readonly AuthorRepository _repositoryAuthor;
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
 
-    public Program()
+    public Program(GitInsightContext context)
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<GitInsightContext>();
-        builder.UseSqlite(connection);
-        var context = new GitInsightContext(builder.Options);
-        context.Database.EnsureCreated();
-
         _context = context;
         _repositoryAuthor = new AuthorRepository(_context);
         _repositoryCommit = new CommitRepository(_context);
         _repositoryRepos = new RepoRepository(_context);
     }
 
-    public string Run(string path, string mode)
+    public string getPathOrCloneRepo(string githubName, string repoName)
     {
-        string output = "";
-        using (var repo = new Repository(path))
+        //Temp folders does not get deleted themselves so remember to delete
+        var path = Path.GetTempPath();
+        string existingPath;
+        if (path.Contains(@"\"))
         {
-            var repoId = SaveTheData(repo);
+            existingPath = path + @$"\{repoName}";
+        }
+        else
+        {
+            existingPath = path + @$"/{repoName}";
+
+        }
+        if (!Directory.Exists(existingPath))
+        {
+            return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
+        }
+
+        return existingPath;
+    }
+
+    public string Run(string githubName, string repoName)
+    {
+        using (var repo = new Repository(getPathOrCloneRepo(githubName, repoName)))
+        {
+            var repoId = SaveOrUpdateTheData(repo, repoName);
             var commits = _repositoryCommit.Read().Where(c => c.RepoId == repoId).ToList();
-            
-            if(mode.Contains("A"))
-            {
-                foreach (var c in AuthorMode(commits))
-                {
-                    output += c + "\n";
-                }
-            }
-            else if(mode.Contains("F"))
-            {
-                foreach (var c in FrequencyMode(commits))
-                {
-                    output += c + "\n";
-                }
-            }
-            return output;
-        }  
-    }
 
-    List<string> FrequencyMode(IEnumerable<CommitDTO> list, String prefix = "")
-    {
-        var stringList = new List<string>();
-        var q =  list.GroupBy(
-            (item => item.Date),
-            (key, elements) => new 
-            {
-                key = key, 
-                count = elements.Distinct().Count()
-            }
-        );
-        foreach (var commit in q)
-        {
-            stringList.Add(prefix+commit.count +" "+commit.key.ToString(@"yyyy-MM-dd"));
+            //Cursed but easy way
+            var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
+
+            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!), Formatting.Indented);
 
         }
-        return stringList;
     }
-    
-     List<string> AuthorMode(IEnumerable<CommitDTO> list)
-     {
-        var stringList = new List<string>();
-        var q = list.GroupBy(
-            (item => item.AuthorName),
-            (key, elements) => new 
-            {
-                key = key,
-                items = elements
-            }
-        );
-        foreach (var commit in q)
-        {
-            stringList.Add(commit.key);
-            stringList.AddRange(FrequencyMode(commit.items, "\t"));
-        }
-        return stringList;
-    }
-    
-    int SaveTheData(Repository repo)
+
+    int SaveOrUpdateTheData(Repository repo, string RepoName)
     {
-        var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(repo.Info.Path, new List<int>()));
+        var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(RepoName, new List<int>()));
         if (repoId == -1)
         {
             return _repositoryRepos.Read().Where(r => r.Name == repo.Info.Path).First().Id;
         }
-        foreach (var commit in repo.Commits.ToList()) 
+        foreach (var commit in repo.Commits.ToList())
         {
             _repositoryCommit.Create(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.Date));
         }
+        var repoDTO = _repositoryRepos.Find(repoId);
+        _repositoryRepos.Update(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
         return repoId;
     }
 }
+
+public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult);

@@ -1,6 +1,7 @@
 namespace GitInsight.Core;
 
-public interface IAuthorRepository{
+public interface IAuthorRepository
+{
     (Response Response, int AuthorID) Create(AuthorCreateDTO author);
     IReadOnlyCollection<AuthorDTO> Read();
     AuthorDTO Find(int authorId);
