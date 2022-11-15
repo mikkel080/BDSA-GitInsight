@@ -54,10 +54,6 @@ public class RepoRepository : IRepoRepository {
         {
             return Response.NotFound;
         }
-        else if (repoUpdate.AllCommits.Count <= repo.AllCommits.Count) 
-        {
-            return Response.Conflict;
-        }
         else
         {
             //Merges two lists without duplicates
@@ -65,6 +61,8 @@ public class RepoRepository : IRepoRepository {
             
             //Saves the new list to a merged and ordered by date list
             repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
+            repo.FrequencyResult = new FrequencyResult(repo.AllCommits, repo.Name);
+            repo.AuthorResult = new AuthorResult(repo.AllCommits, repo.Name);
         
             _context.SaveChanges();
                     
@@ -84,6 +82,8 @@ public class RepoRepository : IRepoRepository {
         
         return Response.Deleted;
     }
+
+
 
     private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
 

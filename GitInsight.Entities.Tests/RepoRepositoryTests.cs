@@ -121,23 +121,6 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Update_repo_no_new_commits()
-    {
-        // Arrange
-        var repo = new Repo("name");
-        _context.Repos.Add(repo);
-        _context.SaveChanges();
-
-        var repoUpdate = new RepoUpdateDTO(repo.Id, repo.Name, repo.LatestCommit, new List<int>());
-
-        // Act
-        var response = _repository.Update(repoUpdate);
-
-        // Assert
-        response.Should().Be(Response.Conflict);
-    }
-
-    [Fact]
     public void Update_nonexistant_repo(){
         // Arrange
 
