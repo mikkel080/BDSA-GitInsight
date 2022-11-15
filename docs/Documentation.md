@@ -4,40 +4,36 @@
 
 ## Introduction
 
-<!-- Maybe we should switch over the Overleaf/LaTeX but for now this will do-->
+This is a ever evolving application that facilitates analysis of git repositories.
+It supports both repositories that are hosted locally and on GitHub.com.
+The application exposes a WEB API, and a webpage where the insights and analysis results can be accessed.
 
-### C\#
+## Architecture
 
-The program is run with arguments that is then parsed to determine which of the two modes to run.
+## RESTful WEB API
 
-<!-- Write text outside this comment, and remember to follow the structure / expand as needed -->
+The WEB API is build on REST principles, mainly supporting `GET` requests.
+The API accepts a GitHub hosted repository, and returns a JSON object with the analysis results.
 
-#### Mode 1: Frequency
+The analysis consists of two distinct modes, called Frequency and Author mode.
+Frequency mode describes the amount of commits that are made on a given day.
+That is, the frequency of commits to the repository over time.
+Author mode, on the other hand, details the amount and distribution of commits for the different authors.
 
-`static void FrequencyMode(IEnumerable<Commit> list, String prefix = "")`
+The REST API exposes both modes to the API caller, packaged in the same JSON object, with different keys. 
 
-Takes a list of commits that is fetched using `LibGitToSharp` and a custom prefix can be included though it has a default of an empty string.
+## Webpage and illustrations
 
-#### Mode 2: Author
-
-`static void AuthorMode(IEnumerable<Commit> list)`
-
-Take a list of commits that is fetched using LibGitToSharp
-
-### Database
+## Database
 
 <!-- Document what the database contains, and when it is updated. 
 Also write that it is an in-memory database and is not persistent -->
 
-### Tests
+## Tests
 
 A test suit is included with the program.
 A sample git directory is included with the program tests, to facilitate testing and verification.
+For testing with remote repositories, real active repos are used.
+This enables easy testing, since the repositories already exists, but requires that they are not removed, made inaccessible or significantly changed.
 
-<!-- Test-coverage, unit test, end to end test-->
-
-### Quality Managment
-
-### GitHub?
-
-### Architecture
+## Quality management
