@@ -1,0 +1,124 @@
+@startuml
+
+class AuthorDTO
+{
+AuthorDTO()
+AuthorCreateDTO()
+AuthorUpdateDTO()
+}
+
+interface IAuthorRepository
+{
+(Response, int) Create()
+IReadOnlyCollection<Author> Read()
+AuthorDTO Find()
+Response Update()
+Response Delete()
+}
+
+class CommitDTO
+{
+CommitDTO()
+CommitCreateDTO()
+}
+
+interface ICommitRepository
+{
+(Response, int) Create()
+IReadOnlyCollection<Commit> Read()
+CommitDTO Find()
+Response Delete()
+}
+
+class RepoDTO
+{
+RepoDTO()
+RepoCreateDTO()
+RepoUpdateDTO()
+}
+
+interface IRepoRepository
+{
+(Response, int) Create()
+IReadOnlyCollection<Repo> Find()
+RepoDTO Find()
+Response Update()
+Response Delete()
+}
+
+enum Response
+{
+Created
+Updated
+Deleted
+NotFound
+BadRequest
+Conflict
+}
+
+package GitInsight.Entities <<Folder>> {
+class GitInsightContext
+{
+DbSet<Author> Authors
+DbSet<Commit> Commits
+DbSet<Repo> Repos
+void OnModelCreating()
+void OnModelCreating()
+}
+class Author
+{
+int Id
+string Name
+ICollection<Commit> AllCommits
+}
+class AuthorRepository
+{
+GitInsightContext _context
+(Response, int) Create()
+IReadOnlyCollection<Author> Read()
+AuthorDTO Find()
+Response Update()
+Response Delete()
+}
+class Commit
+{
+int Id
+int? RepoId
+Repo Repo
+int? AuthorId
+Author Author
+DateTime Date
+}
+class CommitRepository
+{
+GitInsightContext _context
+(Response, int) Create()
+IReadOnlyCollection<Commit> Read()
+CommitDTO Find()
+Response Delete()
+}
+class Repo
+{
+int Id
+string Name
+int LatestCommit
+ICollection<Commit> AllCommits
+}
+class RepoRepository
+{
+GitInsightContext _context
+(Response, int) Create()
+IReadOnlyCollection<Repo> Find()
+RepoDTO Find()
+Response Update()
+Response Delete()
+}
+}
+
+IAuthorRepository <|.. AuthorRepository
+ICommitRepository <|.. CommitRepository
+IRepoRepository <|.. RepoRepository
+AuthorRepository -- GitInsightContext
+CommitRepository -- GitInsightContext
+RepoRepository -- GitInsightContext
+@enduml

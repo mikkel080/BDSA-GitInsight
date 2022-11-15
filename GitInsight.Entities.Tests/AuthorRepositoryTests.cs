@@ -4,7 +4,8 @@ public sealed class AuthorRepositoryTests : IDisposable
 {
     private readonly GitInsightContext _context;
     private readonly AuthorRepository _repository;
-    public AuthorRepositoryTests() {
+    public AuthorRepositoryTests()
+    {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<GitInsightContext>();
@@ -23,7 +24,8 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_author_returns_created(){
+    public void Create_author_returns_created()
+    {
         // Arrange
         var newAuthorDTO = new AuthorCreateDTO("name", new List<int>());
 
@@ -36,7 +38,8 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_author_returns_conflict(){
+    public void Create_author_returns_conflict()
+    {
         // Arrange
         var name = "name";
         _repository.Create(new AuthorCreateDTO(name, new List<int>()));
@@ -51,7 +54,8 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_author_count_0() {
+    public void Read_author_count_0()
+    {
         // Arrange
 
         // Act
@@ -62,7 +66,8 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_author_count_1() {
+    public void Read_author_count_1()
+    {
         // Arrange
         _repository.Create(new AuthorCreateDTO("name", new List<int>()));
 
@@ -74,11 +79,12 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Author_find_found() {
+    public void Author_find_found()
+    {
         // Arrange
         var name = "name";
         _repository.Create(new AuthorCreateDTO(name, new List<int>()));
-        
+
         // Act
         var authorInRepo = _repository.Find(1);
 
@@ -88,9 +94,10 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Author_find_not_found() {
+    public void Author_find_not_found()
+    {
         // Arrange
-        
+
         // Act
         var author = _repository.Find(100);
 
@@ -115,7 +122,8 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Update_non_existing_author(){
+    public void Update_non_existing_author()
+    {
         // Arrange
         var author = new AuthorUpdateDTO(100, "name", new List<int>());
 
