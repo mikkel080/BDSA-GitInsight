@@ -6,7 +6,7 @@
 
 This is a ever evolving application that facilitates analysis of git repositories.
 It supports both repositories that are hosted locally and on GitHub.com.
-The application exposes a WEB API, and a webpage where the insights and analysis results can be accessed.
+The application exposes a WEB API, and a web page where the insights and analysis results can be accessed.
 
 ## Architecture
 
@@ -26,9 +26,9 @@ Frequency mode describes the amount of commits that are made on a given day.
 That is, the frequency of commits to the repository over time.
 Author mode, on the other hand, details the amount and distribution of commits for the different authors.
 
-The REST API exposes both modes to the API caller, packaged in the same JSON object, with different keys. 
+The REST API exposes both modes to the API caller, packaged in the same JSON object, with different keys.
 
-## Webpage and illustrations
+## Web page and illustrations
 
 ## Database
 
