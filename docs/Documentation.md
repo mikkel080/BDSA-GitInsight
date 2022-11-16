@@ -10,6 +10,12 @@ The application exposes a WEB API, and a webpage where the insights and analysis
 
 ## Architecture
 
+<!-- Describe the Architecture, both of the systems themselves, and between them -->
+
+A Class diagram, detailing some of the the classes of the program, is shown below.
+The diagram also shows one of the programs namespaces or packages.
+![Class diagram](ClassDiagram.png)
+
 ## RESTful WEB API
 
 The WEB API is build on REST principles, mainly supporting `GET` requests.
