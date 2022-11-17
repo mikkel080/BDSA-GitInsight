@@ -7,7 +7,7 @@ internal class GitInsightContextFactory : IDesignTimeDbContextFactory<GitInsight
 {
     public GitInsightContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+        var configuration = new ConfigurationBuilder().AddUserSecrets<ProgramAPI>().Build();
         var connectionString = configuration.GetConnectionString("GitInsight");
 
         var optionsBuilder = new DbContextOptionsBuilder<GitInsightContext>();

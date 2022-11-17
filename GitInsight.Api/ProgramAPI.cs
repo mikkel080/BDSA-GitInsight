@@ -1,9 +1,14 @@
 //Learn more about minimal api -> https://learn.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-7.0&tabs=visual-studio-code
 
 var builder = WebApplication.CreateBuilder(args);
-        
+var factory = new GitInsightContextFactory();
+using var context = factory.CreateDbContext(args);
+await context.Database.MigrateAsync();        
 builder.Services.AddDbContext<GitInsightContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GitInsight")));
 
+builder.Services.AddScoped<IRepoRepository, RepoRepository>();
+builder.Services.AddScoped<ICommitRepository, CommitRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
