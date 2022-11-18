@@ -24,11 +24,18 @@ public class ForkTest
     [Fact]
     public void analysisReturnsSomethingAtAll()
     {
-        var forkNames = program.forkAnalysis("itu-bdsa", "project-description");
+        var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
 
         forkNames.Should().NotBeNull();
         forkNames.Count().Should().BeGreaterThanOrEqualTo(1);
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(37);
-        forkNames.Should().Contain("JonasUJ/project-description");
+        forkNames.Count().Should().BeGreaterThanOrEqualTo(9);
+        forkNames.Should().Contain("jskoven/lecture-code");
+    }
+
+    [Fact (Skip = "Takes up a lot of requests")]
+    public void analysisResultForLargeRepository()
+    {
+        var forkNames = program.forkAnalysis("processing", "p5.js");
+        forkNames.Count().Should().BeGreaterThanOrEqualTo(2000);
     }
 }
