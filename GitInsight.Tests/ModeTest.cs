@@ -16,18 +16,18 @@ public class ModeTest
     }
 
     [Fact]
-    public void CommitFrequency()
+    public async void CommitFrequencyAsync()
     {
-        var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
+        var output = await program.Run("Miniim98", "Assignment00_BDSA_2022");
 
         output.Should().Contain("2022-09-04T00:00:00");
         output.Should().Contain("\"Count\": 3");
     }
 
     [Fact]
-    public void CommitAuthor()
+    public async void CommitAuthor()
     {
-        var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
+        var output = await program.Run("Miniim98", "Assignment00_BDSA_2022");
 
         output.Should().Contain("Amalie (amdh)");
         output.Should().Contain("2022-09-04T00:00:00");
@@ -35,9 +35,9 @@ public class ModeTest
     }
 
     [Fact]
-    public void test_if_string_is_json()
+    public async void test_if_string_is_json()
     {
-        var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
+        var output = await program.Run("Miniim98", "Assignment00_BDSA_2022");
         JsonConvert.DeserializeObject(output).Should().NotBe(null);
 
     }
