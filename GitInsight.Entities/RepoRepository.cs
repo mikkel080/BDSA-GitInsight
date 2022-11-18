@@ -23,7 +23,7 @@ public class RepoRepository : IRepoRepository
         }
         else
         {
-            return (Response.Conflict, -1);
+            return (Response.Conflict, newRepo.Id);
         }
 
         return (Response.Created, newRepo.Id);

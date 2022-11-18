@@ -9,7 +9,7 @@ public class FrequencyResult
         Data = new List<EntryF>();
         this.RepoName = RepoName;
         var q = list.GroupBy(
-            (item => item.Date),
+            (item => item.Date.Date),
             (key, elements) => new
             {
                 key = key,
