@@ -22,11 +22,13 @@ public class ForkTest
     }
 
     [Fact]
-    public void JSON_is_returned()
+    public void analysisReturnsSomethingAtAll()
     {
-        var RESTCall = program.forkAnalysis("itu-bdsa", "project-description");
+        var forkNames = program.forkAnalysis("itu-bdsa", "project-description");
 
-        RESTCall.Should().NotBeNull();
-        
+        forkNames.Should().NotBeNull();
+        forkNames.Count().Should().BeGreaterThanOrEqualTo(1);
+        forkNames.Count().Should().BeGreaterThanOrEqualTo(37);
+        forkNames.Should().Contain("JonasUJ/project-description");
     }
 }

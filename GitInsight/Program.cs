@@ -72,7 +72,7 @@ public sealed class Program
         return repoId;
     }
     
-    public object forkAnalysis(string githubName, string repoName)
+    public IEnumerable<String> forkAnalysis(string githubName, string repoName)
     {
         using HttpClient client = new();
 
@@ -81,11 +81,23 @@ public sealed class Program
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
-
-        var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks";
+        
+        var pageSettings = "?page=1&per_page=100";
+        var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks{pageSettings}";
         var json = client.GetStringAsync(url);
+        var result = (Newtonsoft.Json.Linq.JArray) JsonConvert.DeserializeObject(json.Result)!;
 
-        return JsonConvert.DeserializeObject(json.Result)!;   
+        List<String> forks = new List<String>();
+
+        foreach(var entry in result){
+            foreach(Newtonsoft.Json.Linq.JProperty? item in entry.Values<Newtonsoft.Json.Linq.JProperty>()){
+                if (item!.Name == "full_name"){
+                    forks.Add(item!.Value.ToString());
+                }
+            }
+        }
+
+        return forks;   
     }
 }
 
