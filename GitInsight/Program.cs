@@ -1,7 +1,8 @@
 ﻿namespace GitInsight;
 
 using LibGit2Sharp;
-
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
 public sealed class Program
 {
@@ -69,6 +70,22 @@ public sealed class Program
         var repoDTO = _repositoryRepos.Find(repoId);
         _repositoryRepos.Update(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
         return repoId;
+    }
+    
+    public object forkAnalysis(string githubName, string repoName)
+    {
+        using HttpClient client = new();
+
+        var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+        var secret = configuration.GetSection("GITHUBAPI").Value;
+
+        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
+
+        var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks";
+        var json = client.GetStringAsync(url);
+
+        return JsonConvert.DeserializeObject(json.Result)!;   
     }
 }
 
