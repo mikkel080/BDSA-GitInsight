@@ -28,6 +28,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
+          GITHUBAPI: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Restore
         run: dotnet restore
