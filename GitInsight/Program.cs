@@ -32,12 +32,15 @@ public sealed class Program
             existingPath = path + @$"/{repoName}";
 
         }
-        if (!Directory.Exists(existingPath) && Repository.IsValid(existingPath))
+        if (!Directory.Exists(existingPath))
         {
             return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
         }
-
-        return existingPath;
+        else if (Repository.IsValid(existingPath))
+        {
+            return existingPath;
+        }
+        return "";
     }
 
     public async Task<string> Run(string githubName, string repoName)
