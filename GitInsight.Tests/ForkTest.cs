@@ -32,7 +32,7 @@ public class ForkTest
         forkNames.Should().Contain("jskoven/lecture-code");
     }
 
-    [Fact (Skip = "Takes up a lot of requests")]
+    [Fact(Skip = "Takes up a lot of requests")]
     public void analysisResultForLargeRepository()
     {
         var forkNames = program.forkAnalysis("processing", "p5.js");
