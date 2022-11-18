@@ -1,7 +1,8 @@
 ﻿namespace GitInsight;
 
 using LibGit2Sharp;
-
+using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
 public sealed class Program
 {
@@ -69,6 +70,41 @@ public sealed class Program
         var repoDTO = _repositoryRepos.Find(repoId);
         _repositoryRepos.Update(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
         return repoId;
+    }
+
+    public IEnumerable<String> forkAnalysis(string githubName, string repoName)
+    {
+        using HttpClient client = new();
+
+        var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+        var secret = configuration.GetSection("GITHUBAPI").Value;
+
+        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
+
+        var perPage = 100;
+        int page = 0;
+        List<String> forks = new List<String>();
+        while (forks.Count >= page * perPage)
+        {
+            page++;
+            var pageSettings = $"?page={page}&per_page={perPage}";
+            var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks{pageSettings}";
+            var json = client.GetStringAsync(url);
+            var result = (Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(json.Result)!;
+
+            foreach (var entry in result)
+            {
+                foreach (Newtonsoft.Json.Linq.JProperty? item in entry.Values<Newtonsoft.Json.Linq.JProperty>())
+                {
+                    if (item!.Name == "full_name")
+                    {
+                        forks.Add(item!.Value.ToString());
+                    }
+                }
+            }
+        }
+        return forks;
     }
 }
 
