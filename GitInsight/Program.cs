@@ -51,7 +51,7 @@ public sealed class Program
         {
             int repoId;
             CheckForGitUpdates(repo);
-            repoId = await CreateOrUpdateData(repo, repoName);
+            repoId = await CreateOrUpdateData(repo, githubName + "/" +repoName);
 
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
