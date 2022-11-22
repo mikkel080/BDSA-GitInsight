@@ -43,6 +43,6 @@ public class ForkTest
     public void RESTfulAPIIncludesForkInfo()
     {
         var forkNames = program.Run("itu-bdsa", "lecture-code");
-        //forkNames.Result.Should().Contain("jskoven/lecture-code");
+        forkNames.Should().Contain("jskoven/lecture-code");
     }
 }
