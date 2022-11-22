@@ -138,7 +138,7 @@ public sealed class Program
         
         var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
 
-        if (secret!.Length < 4)
+        if (secret == null)
         {
             secret = envSecret;
         }
