@@ -38,4 +38,11 @@ public class ForkTest
         var forkNames = program.forkAnalysis("processing", "p5.js");
         forkNames.Count().Should().BeGreaterThanOrEqualTo(2000);
     }
+
+    [Fact]
+    public void RESTfulAPIIncludesForkInfo()
+    {
+        var forkNames = program.Run("itu-bdsa", "lecture-code");
+        forkNames.Should().Contain("jskoven/lecture-code");
+    }
 }
