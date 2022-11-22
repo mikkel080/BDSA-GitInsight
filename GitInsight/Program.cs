@@ -137,10 +137,11 @@ public sealed class Program
         var secret = configuration.GetSection("GITHUBAPI").Value;
 
         secret = configuration["GITHUBAPI"];
+        var wwwwww = configuration["wwwwww"];
 
         if (secret != "")
         {
-            throw new Exception($"secret: {secret}");
+            throw new Exception($"secret: {secret}, wwwwww: {wwwwww}");
         }
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
