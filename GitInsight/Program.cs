@@ -51,7 +51,7 @@ public sealed class Program
         {
             int repoId;
             CheckForGitUpdates(repo);
-            repoId = CreateOrUpdateData(repo, githubName + "/" +repoName);
+            repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
@@ -106,14 +106,14 @@ public sealed class Program
         {
             var reponseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
         }
-        var repoDTO =  _repositoryRepos.FindAsync(repoId).Result;
+        var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
 
         var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits)).Result;
     }
 
     void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
     {
-        var allCommits =  _repositoryCommit.ReadAsync().Result;
+        var allCommits = _repositoryCommit.ReadAsync().Result;
         var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
 
         foreach (var commit in repo.Commits.ToList())
