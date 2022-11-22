@@ -36,8 +36,6 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Test
-        with:
-          GITHUBAPI: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUBAPI: ${{ secrets.GITHUB_TOKEN }}
         run: dotnet test
