@@ -28,6 +28,8 @@ Author mode, on the other hand, details the amount and distribution of commits f
 
 The REST API exposes both modes to the API caller, packaged in the same JSON object, with different keys.
 
+### GitHub API Key
+
 ## Web page and illustrations
 
 ## Database

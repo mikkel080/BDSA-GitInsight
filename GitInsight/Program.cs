@@ -58,8 +58,8 @@ public sealed class Program
 
             var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
 
-            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!,ForkResult), Formatting.Indented);
-        }   
+            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult), Formatting.Indented);
+        }
     }
 
     void CheckForGitUpdates(Repository repo)
