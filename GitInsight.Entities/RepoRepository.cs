@@ -11,45 +11,45 @@ public class RepoRepository : IRepoRepository
         _context = context;
     }
 
-    public (Response Response, int RepoID) Create(RepoCreateDTO repo)
+    public async Task<(Response Response, int RepoID)> CreateAsync(RepoCreateDTO repo)
     {
-        var newRepo = _context.Repos.FirstOrDefault(c => c.Name.Equals(repo.Name));
+        var newRepo = await _context.Repos.FirstOrDefaultAsync(c => c.Name.Equals(repo.Name));
 
         if (newRepo is null)
         {
             newRepo = new Repo(repo.Name);
             _context.Repos.Add(newRepo);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         else
         {
-            return (Response.Conflict, -1);
+            return (Response.Conflict, newRepo.Id);
         }
 
         return (Response.Created, newRepo.Id);
     }
 
-    public IReadOnlyCollection<RepoDTO> Read()
+    public async Task<IReadOnlyCollection<RepoDTO>> ReadAsync()
     {
         var repos = from r in _context.Repos
                     orderby r.Id
                     select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList());
 
-        return repos.ToArray();
+        return await repos.ToArrayAsync();
     }
 
-    public RepoDTO Find(int repoId)
+    public async Task<RepoDTO> FindAsync(int repoId)
     {
-        var repo = _context.Repos.FirstOrDefault(r => r.Id == repoId);
+        var repo = await (from r in _context.Repos
+                          where r.Id == repoId
+                          select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList())).FirstOrDefaultAsync();
 
-        return (repo is not null
-            ? new RepoDTO(repo.Id, repo.Name, repo.LatestCommit, repo.AllCommits.Select(c => c.Id).ToList())
-            : null)!;
+        return repo!;
     }
 
-    public Response Update(RepoUpdateDTO repoUpdate)
+    public async Task<Response> UpdateAsync(RepoUpdateDTO repoUpdate)
     {
-        var repo = _context.Repos.Find(repoUpdate.Id);
+        var repo = await _context.Repos.FindAsync(repoUpdate.Id);
 
         if (repo is null)
         {
@@ -58,22 +58,24 @@ public class RepoRepository : IRepoRepository
         else
         {
             //Merges two lists without duplicates
-            var newList = getCommitsList(repoUpdate.AllCommits).ToList().Union(repo.AllCommits).ToList();
+            var list = await getCommitsListAsync(repoUpdate.AllCommits);
+            var newList = list.Union(repo.AllCommits).ToList();
 
             //Saves the new list to a merged and ordered by date list
             repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
+            //Set results
             repo.FrequencyResult = new FrequencyResult(repo.AllCommits, repo.Name);
             repo.AuthorResult = new AuthorResult(repo.AllCommits, repo.Name);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Response.Updated;
         }
     }
 
-    public Response Delete(int repoId)
+    public async Task<Response> DeleteAsync(int repoId)
     {
-        var entity = _context.Repos.Find(repoId);
+        var entity = await _context.Repos.FindAsync(repoId);
 
         if (entity is null)
         {
@@ -81,13 +83,13 @@ public class RepoRepository : IRepoRepository
         }
 
         _context.Repos.Remove(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Response.Deleted;
     }
 
 
 
-    private ICollection<Commit> getCommitsList(ICollection<int> commitIds) => _context.Commits.Where(c => commitIds.Contains(c.Id)).ToList();
+    private async Task<ICollection<Commit>> getCommitsListAsync(ICollection<int> commitIds) => await _context.Commits.Where(c => commitIds.Contains(c.Id)).ToListAsync();
 
 }

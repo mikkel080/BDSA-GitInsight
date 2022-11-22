@@ -1,12 +1,5 @@
 namespace GitInsight.Entities;
 
-using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.EntityFrameworkCore.Metadata;
-
-using GitInsight.Core;
 
 public partial class GitInsightContext : DbContext
 {

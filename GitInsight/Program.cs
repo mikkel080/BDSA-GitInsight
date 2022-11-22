@@ -1,6 +1,7 @@
 ﻿namespace GitInsight;
 
 using LibGit2Sharp;
+using LibGit2Sharp.Handlers;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 
@@ -37,39 +38,56 @@ public sealed class Program
         {
             return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
         }
-
-        return existingPath;
+        else if (Repository.IsValid(existingPath))
+        {
+            return existingPath;
+        }
+        return "";
     }
 
-    public string Run(string githubName, string repoName)
+    public async Task<string> Run(string githubName, string repoName)
     {
         using (var repo = new Repository(getPathOrCloneRepo(githubName, repoName)))
         {
-            var repoId = SaveOrUpdateTheData(repo, repoName);
-            var commits = _repositoryCommit.Read().Where(c => c.RepoId == repoId).ToList();
+            int repoId;
+            CheckForGitUpdates(repo);
+            repoId = await CreateOrUpdateData(repo, repoName);
 
-            //Cursed but easy way
+            //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
 
             var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
 
-            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult), Formatting.Indented);
-        }
+            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!,ForkResult), Formatting.Indented);
+        }   
     }
 
-    int SaveOrUpdateTheData(Repository repo, string RepoName)
+    async Task<int> SaveDataAsync(Repository repo, int repoId)
     {
-        var (response, repoId) = _repositoryRepos.Create(new RepoCreateDTO(RepoName, new List<int>()));
-        if (repoId == -1)
-        {
-            return _repositoryRepos.Read().Where(r => r.Name == repo.Info.Path).First().Id;
-        }
         foreach (var commit in repo.Commits.ToList())
         {
-            _repositoryCommit.Create(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.Date));
+            await _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime));
         }
-        var repoDTO = _repositoryRepos.Find(repoId);
-        _repositoryRepos.Update(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
+        var repoDTO = await _repositoryRepos.FindAsync(repoId);
+
+        await _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
+        return repoId;
+    }
+
+    async Task<int> UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
+    {
+        var allCommits = await _repositoryCommit.ReadAsync();
+        var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
+
+        foreach (var commit in repo.Commits.ToList())
+        {
+            if (currentCommits.Contains(commit.Author.When.DateTime)) { continue; }
+            else
+            {
+                await _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime));
+            }
+        }
+        await _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
         return repoId;
     }
 
