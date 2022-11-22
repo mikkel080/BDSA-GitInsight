@@ -135,7 +135,7 @@ public sealed class Program
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var secret = configuration["GITHUBAPI"];
-        
+
         var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
 
         if (secret == null)
