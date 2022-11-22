@@ -39,7 +39,7 @@ public class ForkTest
         forkNames.Count().Should().BeGreaterThanOrEqualTo(2000);
     }
 
-    [Fact(Skip= "Result system does not work")]
+    [Fact]
     public void RESTfulAPIIncludesForkInfo()
     {
         var forkNames = program.Run("itu-bdsa", "lecture-code");
