@@ -138,7 +138,10 @@ public sealed class Program
         
         var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
 
-        throw new Exception($"secret: {secret}, envsec {envSecret}");
+        if (secret!.Length < 4)
+        {
+            secret = envSecret;
+        }
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
