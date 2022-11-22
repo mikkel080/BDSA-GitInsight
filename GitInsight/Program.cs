@@ -45,13 +45,13 @@ public sealed class Program
         return "";
     }
 
-    public async Task<string> Run(string githubName, string repoName)
+    public string Run(string githubName, string repoName)
     {
         using (var repo = new Repository(getPathOrCloneRepo(githubName, repoName)))
         {
             int repoId;
             CheckForGitUpdates(repo);
-            repoId = await CreateOrUpdateData(repo, repoName);
+            repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
@@ -83,40 +83,39 @@ public sealed class Program
         Commands.Pull(repo, signature, options);
     }
 
-    async Task<int> CreateOrUpdateData(Repository repo, string RepoName)
+    int CreateOrUpdateData(Repository repo, string RepoName)
     {
-        var (response, repoId) = await _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>()));
+        var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;
         if (response == Response.Created)
         {
-            await SaveDataAsync(repo, repoId);
+            SaveDataAsync(repo, repoId);
         }
         else
         {
-            var repoDTO = await _repositoryRepos.FindAsync(repoId);
-            var latestDate = await _repositoryCommit.FindAsync(repoDTO.LatestCommit);
+            var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
+            var latestDate = _repositoryCommit.FindAsync(repoDTO.LatestCommit).Result;
             if (repo.Commits.First().Author.When.DateTime != latestDate.Date)
             {
-                await UpdateDataAsync(repo, repoId, repoDTO);
+                UpdateDataAsync(repo, repoId, repoDTO);
             }
         }
         return repoId;
     }
 
-    async Task<int> SaveDataAsync(Repository repo, int repoId)
+    void SaveDataAsync(Repository repo, int repoId)
     {
         foreach (var commit in repo.Commits.ToList())
         {
-            await _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime));
+            var reponseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
         }
-        var repoDTO = await _repositoryRepos.FindAsync(repoId);
+        var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
 
-        await _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
-        return repoId;
+        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits)).Result;
     }
 
-    async Task<int> UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
+    void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
     {
-        var allCommits = await _repositoryCommit.ReadAsync();
+        var allCommits = _repositoryCommit.ReadAsync().Result;
         var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
 
         foreach (var commit in repo.Commits.ToList())
@@ -124,11 +123,10 @@ public sealed class Program
             if (currentCommits.Contains(commit.Author.When.DateTime)) { continue; }
             else
             {
-                await _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime));
+                var responseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
             }
         }
-        await _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
-        return repoId;
+        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
     }
 
     public IEnumerable<String> forkAnalysis(string githubName, string repoName)

@@ -111,11 +111,11 @@ public sealed class RepoRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async void Update_repo_new_commits_async()
+    public async void Update_repo_name_async()
     {
         // Arrange
         await _repository.CreateAsync(new RepoCreateDTO("name", new List<int>()));
-        var repoUpdate = new RepoUpdateDTO(2, "name", 0, new List<int>() { 1, 2 });
+        var repoUpdate = new RepoUpdateDTO(2, "new name", 0, new List<int>());
 
         // Act
         var response = await _repository.UpdateAsync(repoUpdate);
@@ -123,8 +123,7 @@ public sealed class RepoRepositoryTests : IDisposable
         // Assert
         var res = await _repository.FindAsync(2);
         response.Should().Be(Response.Updated);
-        _context.Commits.Where(c => c.Id == 1).First().RepoID.Should().Be(2);
-        res.LatestCommit.Should().Be(2);
+        res.Name.Should().BeEquivalentTo("new name");
     }
 
     [Fact]

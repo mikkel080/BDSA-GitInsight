@@ -21,12 +21,17 @@ The diagram also shows one of the programs namespaces or packages.
 The WEB API is build on REST principles, mainly supporting `GET` requests.
 The API accepts a GitHub hosted repository, and returns a JSON object with the analysis results.
 
-The analysis consists of two distinct modes, called Frequency and Author mode.
-Frequency mode describes the amount of commits that are made on a given day.
+The analysis consists of three different parts, called Frequency, Author and Fork.
+Frequency analysis describes the amount of commits that are made on a given day.
 That is, the frequency of commits to the repository over time.
-Author mode, on the other hand, details the amount and distribution of commits for the different authors.
+Author analysis, on the other hand, details the amount and distribution of commits for the different authors.
 
-The REST API exposes both modes to the API caller, packaged in the same JSON object, with different keys.
+Fork analysis, uses the public GitHub API to list all direct Forks of the repository.
+At the moment it only lists direct forks and not forks of forks, and so on.
+
+The REST API exposes the analysis to the API caller, packaged in a labeled JSON object.
+
+## Authentication and access
 
 ### GitHub API Key
 
