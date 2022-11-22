@@ -138,7 +138,7 @@ public sealed class Program
 
         secret = configuration["GITHUBAPI"];
 
-        if (secret == "")
+        if (secret != "")
         {
             throw new Exception($"secret: {secret}");
         }
