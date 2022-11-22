@@ -31,6 +31,8 @@ At the moment it only lists direct forks and not forks of forks, and so on.
 
 The REST API exposes the analysis to the API caller, packaged in a labeled JSON object.
 
+## Authentication and access
+
 ## Web page and illustrations
 
 ## Database

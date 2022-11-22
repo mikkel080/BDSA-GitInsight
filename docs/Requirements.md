@@ -37,3 +37,6 @@
 * The programs dependencies, including runtime, must be kept up to date
 * The frontend must be written with .Net Blazor
 * The program must not contain any API keys or other secrets
+* All communication between users and the services must be encrypted
+* All communication between the programs services must be encrypted
+* Users and consumers of frontend web-application and RESTful API must be authenticated to access the service
