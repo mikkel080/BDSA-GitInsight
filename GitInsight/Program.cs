@@ -134,15 +134,9 @@ public sealed class Program
         using HttpClient client = new();
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var secret = configuration.GetSection("GITHUBAPI").Value;
+        var secret = configuration["GITHUBAPI"];
 
-        secret = configuration["GITHUBAPI"];
-        var wwwwww = configuration["wwwwww"];
-
-        if (secret != "")
-        {
-            throw new Exception($"secret: {secret}, wwwwww: {wwwwww}");
-        }
+        throw new Exception($"secret: {secret}");
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);

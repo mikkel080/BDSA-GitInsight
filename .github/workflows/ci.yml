@@ -2,7 +2,7 @@
 name: Build and Test
 
 env:
-  GITHUBAPI: ${{ secrets.GITHUB_TOKEN }}
+  GITHUBAPI: 'hi there'
 
 on:
   push:
