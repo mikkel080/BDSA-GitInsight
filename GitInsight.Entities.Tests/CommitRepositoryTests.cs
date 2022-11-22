@@ -25,14 +25,14 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_commit_returns_created()
+    public async void Create_commit_returns_created_async()
     {
 
         //Arrange
         var newcommitDTO = new CommitCreateDTO(1, "nameAuthor", new DateTime());
 
         // Act
-        var (response, newCommitId) = _repository.Create(newcommitDTO);
+        var (response, newCommitId) = await _repository.CreateAsync(newcommitDTO);
         var newAuthor = (from a in _context.Authors
                          where a.Name == newcommitDTO.AuthorName
                          select a).First();
@@ -45,13 +45,13 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_commit_returns_conflict()
+    public async void Create_commit_returns_conflict_async()
     {
         // Arrange
         var firstCommitDTO = new CommitCreateDTO(2, "name", new DateTime());
 
         // Act
-        var (response, firstCommitId) = _repository.Create(firstCommitDTO);
+        var (response, firstCommitId) = await _repository.CreateAsync(firstCommitDTO);
 
         // Assert
         response.Should().Be(Response.Conflict);
@@ -59,39 +59,39 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_commit_count_0()
+    public async void Read_commit_count_0_async()
     {
         // Arrange
 
         // Act
-        var commitList = _repository.Read();
+        var commitList = await _repository.ReadAsync();
 
         // Assert
         commitList.Count().Should().Be(0);
     }
 
     [Fact]
-    public void Read_commit_count_1()
+    public async void Read_commit_count_1_async()
     {
         // Arrange
 
-        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
+        await _repository.CreateAsync(new CommitCreateDTO(1, "name", DateTime.Now));
 
         // Act
-        var commitList = _repository.Read();
+        var commitList = await _repository.ReadAsync();
 
         // Assert
         commitList.Count().Should().Be(1);
     }
 
     [Fact]
-    public void Commit_find_found()
+    public async void Commit_find_found_async()
     {
         // Arrange
-        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
+        await _repository.CreateAsync(new CommitCreateDTO(1, "name", DateTime.Now));
 
         // Act
-        var commitInRepo = _repository.Find(1);
+        var commitInRepo = await _repository.FindAsync(1);
 
         // Assert
         commitInRepo.Id.Should().Be(1);
@@ -100,37 +100,37 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void commit_find_not_found()
+    public async void commit_find_not_found_async()
     {
         // Arrange
 
         // Act
-        var commit = _repository.Find(100);
+        var commit = await _repository.FindAsync(100);
 
         // Assert
         commit.Should().BeNull();
     }
 
     [Fact]
-    public void Delete_commit()
+    public async void Delete_commit_async()
     {
         // Arrange
-        _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
+        await _repository.CreateAsync(new CommitCreateDTO(1, "name", DateTime.Now));
 
         // Act
-        var response = _repository.Delete(1);
+        var response = await _repository.DeleteAsync(1);
 
         // Assert
         response.Should().Be(Response.Deleted);
     }
 
     [Fact]
-    public void Delete_commit_not_found()
+    public async void Delete_commit_not_found_async()
     {
         // Arrange
 
         // Act
-        var response = _repository.Delete(100);
+        var response = await _repository.DeleteAsync(100);
 
         // Assert
         response.Should().Be(Response.NotFound);

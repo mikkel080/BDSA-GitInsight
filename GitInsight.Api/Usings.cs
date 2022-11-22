@@ -9,3 +9,5 @@ global using FluentValidation;
 
 global using GitInsight.Core;
 global using GitInsight.Entities;
+global using GitInsight;
+global using GitInsight.Api;

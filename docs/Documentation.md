@@ -34,6 +34,8 @@ The REST API exposes both modes to the API caller, packaged in the same JSON obj
 
 <!-- Document what the database contains, and when it is updated. 
 Also write that it is an in-memory database and is not persistent -->
+To start the database use command in commandline -> docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+The database contains information about the results from the analysis, the GitHub Repository, it's commits and the authors. We use DTO's to transfer data to and from the database.
 
 ## Tests
 
