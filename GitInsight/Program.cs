@@ -135,9 +135,14 @@ public sealed class Program
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var secret = configuration.GetSection("GITHUBAPI").Value;
-      
+
         secret = configuration["GITHUBAPI"];
-                
+
+        if (secret == "")
+        {
+            throw new Exception($"secret: {secret}");
+        }
+
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
 
