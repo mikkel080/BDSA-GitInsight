@@ -51,8 +51,9 @@ public sealed class Program
             //Cursed but easy way
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
 
-            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!), Formatting.Indented);
+            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
 
+            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult), Formatting.Indented);
         }
     }
 
@@ -108,4 +109,5 @@ public sealed class Program
     }
 }
 
-public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult);
+public record ForkResult(IEnumerable<String> Forks);
+public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
