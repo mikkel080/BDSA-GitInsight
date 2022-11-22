@@ -57,12 +57,11 @@ public class RepoRepository : IRepoRepository
         }
         else
         {
-            //Merges two lists without duplicates
-            var list = await getCommitsListAsync(repoUpdate.AllCommits);
-            var newList = list.Union(repo.AllCommits).ToList();
+            if (!repo.Name.Equals(repoUpdate.Name) && _context.Repos.Where(r => r.Name.Equals(repoUpdate.Name)).FirstOrDefault() is null)
+            {
+                repo.Name = repoUpdate.Name;
+            }
 
-            //Saves the new list to a merged and ordered by date list
-            repo.AllCommits = newList.OrderBy(c => c.Date).ToList();
             //Set results
             repo.FrequencyResult = new FrequencyResult(repo.AllCommits, repo.Name);
             repo.AuthorResult = new AuthorResult(repo.AllCommits, repo.Name);
