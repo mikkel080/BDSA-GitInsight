@@ -6,12 +6,14 @@
 * The program must read remote repositories hosted on GitHub
 * The program must maintain a local, secret, version of analyzed remote repositories
 * The program must be able to collect all commits, author names, and author dates from a repository
-* The program must support two different analysis modes: commit frequency mode, and commit author mode
-* Commit frequency mode must list the number of commits per day
-* Commit author mode must list the number of commits per day per author
+* The program must support three analyses: commit frequency, commit author, and fork
+* Commit frequency must list the number of commits per day
+* Commit author must list the number of commits per day per author
+* Fork analysis must list all public immediate forks of the remote repository
 * The program must store and update analysis results in a persistent database
 * The program must use the database to expedite processing of repositories
 * The program must expose a RESTful WEB API, that supplies JSON Objects
+* The API must supply the results of commit frequency analysis, commit author analysis, and fork analysis
 * The program must contain a frontend web-application
 * The frontend must enable the user to analyze remote repositories
 * The frontend must display illustrations that gives relevant insights into the repository
