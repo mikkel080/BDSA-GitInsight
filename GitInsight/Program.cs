@@ -62,6 +62,46 @@ public sealed class Program
         }   
     }
 
+    void CheckForGitUpdates(Repository repo)
+    {
+        // Credential information to fetch
+        LibGit2Sharp.PullOptions options = new LibGit2Sharp.PullOptions();
+        options.FetchOptions = new FetchOptions();
+        options.FetchOptions.CredentialsProvider = new CredentialsHandler(
+        (url, usernameFromUrl, types) =>
+            new UsernamePasswordCredentials()
+            {
+                Username = "USERNAME",
+                Password = "PASSWORD"
+            });
+
+        // User information to create a merge commit
+        var signature = new LibGit2Sharp.Signature(
+            new Identity("MERGE_USER_NAME", "MERGE_USER_EMAIL"), DateTimeOffset.Now);
+
+        // Pull
+        Commands.Pull(repo, signature, options);
+    }
+
+    async Task<int> CreateOrUpdateData(Repository repo, string RepoName)
+    {
+        var (response, repoId) = await _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>()));
+        if (response == Response.Created)
+        {
+            await SaveDataAsync(repo, repoId);
+        }
+        else
+        {
+            var repoDTO = await _repositoryRepos.FindAsync(repoId);
+            var latestDate = await _repositoryCommit.FindAsync(repoDTO.LatestCommit);
+            if (repo.Commits.First().Author.When.DateTime != latestDate.Date)
+            {
+                await UpdateDataAsync(repo, repoId, repoDTO);
+            }
+        }
+        return repoId;
+    }
+
     async Task<int> SaveDataAsync(Repository repo, int repoId)
     {
         foreach (var commit in repo.Commits.ToList())
