@@ -1,25 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight", "GitInsight\GitInsight.csproj", "{BF052311-3A80-4DF6-AEB3-AC3A67A1ED83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight", "GitInsight\GitInsight.csproj", "{BF052311-3A80-4DF6-AEB3-AC3A67A1ED83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Tests", "GitInsight.Tests\GitInsight.Tests.csproj", "{9F4B1603-2F5E-440B-BC9F-84C2B99D40B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Tests", "GitInsight.Tests\GitInsight.Tests.csproj", "{9F4B1603-2F5E-440B-BC9F-84C2B99D40B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Core", "GitInsight.Core\GitInsight.Core.csproj", "{D3BDD1E5-3EC1-4F3C-AF65-9D3DE0566560}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Core", "GitInsight.Core\GitInsight.Core.csproj", "{D3BDD1E5-3EC1-4F3C-AF65-9D3DE0566560}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Entities", "GitInsight.Entities\GitInsight.Entities.csproj", "{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Entities", "GitInsight.Entities\GitInsight.Entities.csproj", "{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Entities.Tests", "GitInsight.Entities.Tests\GitInsight.Entities.Tests.csproj", "{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Entities.Tests", "GitInsight.Entities.Tests\GitInsight.Entities.Tests.csproj", "{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Api", "GitInsight.Api\GitInsight.Api.csproj", "{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BF052311-3A80-4DF6-AEB3-AC3A67A1ED83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -42,5 +41,15 @@ Global
 		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D3997D54-7EE4-4216-A6A5-21E2E8C6B5D9}
 	EndGlobalSection
 EndGlobal
