@@ -39,6 +39,5 @@ public class ModeTest
     {
         var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
         JsonConvert.DeserializeObject(output).Should().NotBe(null);
-
     }
 }

@@ -27,15 +27,15 @@ public class ForkTest
         var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
 
         forkNames.Should().NotBeNull();
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(1);
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(9);
-        forkNames.Should().Contain("jskoven/lecture-code");
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(1);
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(9);
+        forkNames.RepositoryIdentifiers.Should().Contain(new RepositoryIdentifier("jskoven","lecture-code"));
     }
 
     [Fact(Skip = "Takes up a lot of requests")]
     public void analysisResultForLargeRepository()
     {
         var forkNames = program.forkAnalysis("processing", "p5.js");
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(2000);
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(2000);
     }
 }
