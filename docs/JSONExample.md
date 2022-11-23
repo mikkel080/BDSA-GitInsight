@@ -1,0 +1,71 @@
+# JSON Object Example
+
+```js
+{
+  "RepositoryIdentifier": {
+    "Organization": "Miniim98",
+    "Repository": "Assignment00_BDSA_2022"
+  },
+  "FrequencyResult": {
+    "Data": [
+      {
+        "Count": 4,
+        "Date": "2022-11-18T00:00:00"
+      },
+      {
+        "Count": 1,
+        "Date": "2022-09-07T00:00:00"
+      },
+      {
+        "Count": 1,
+        "Date": "2022-09-04T00:00:00"
+      },
+      {
+        "Count": 3,
+        "Date": "2022-09-02T00:00:00"
+      }
+    ]
+  },
+  "AuthorResult": {
+    "Data": [
+      {
+        "AuthorName": "Amalie Holm",
+        "FrequencyResults": {
+          "Data": [
+            {
+              "Count": 4,
+              "Date": "2022-11-18T00:00:00"
+            },
+            {
+              "Count": 1,
+              "Date": "2022-09-07T00:00:00"
+            },
+            {
+              "Count": 1,
+              "Date": "2022-09-04T00:00:00"
+            },
+            {
+              "Count": 2,
+              "Date": "2022-09-02T00:00:00"
+            }
+          ]
+        }
+      },
+      {
+        "AuthorName": "Amalie (amdh)",
+        "FrequencyResults": {
+          "Data": [
+            {
+              "Count": 1,
+              "Date": "2022-09-02T00:00:00"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "ForkResult": {
+    "RepositoryIdentifiers": []
+  }
+}
+```

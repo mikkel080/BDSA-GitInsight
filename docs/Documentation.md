@@ -31,8 +31,10 @@ At the moment it only lists direct forks and not forks of forks, and so on.
 
 The REST API exposes the analysis to the API caller, packaged in a labeled JSON object.
 
-<!-- Explain the structure of the supplied JSON object, and what it consists of. 
-Give an example, and a quick overview -->
+### JSON Object
+
+An example JSON Object that has been build by the API can be seen [here](JSONExample.md).
+It is a JSON Object that contains information about the repository, and the analysis described previously.
 
 ### GitHub API Key
 
