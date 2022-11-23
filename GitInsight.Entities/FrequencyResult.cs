@@ -14,7 +14,7 @@ public class FrequencyResult
                 count = elements.Distinct().Count()
             }
         );
-    
+
         foreach (var commit in q)
         {
             Data = Data.Append(new EntryF(commit.count, commit.key));

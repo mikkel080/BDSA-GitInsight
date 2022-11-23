@@ -29,7 +29,7 @@ public class ForkTest
         forkNames.Should().NotBeNull();
         forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(1);
         forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(9);
-        forkNames.RepositoryIdentifiers.Should().Contain(new RepositoryIdentifier("jskoven","lecture-code"));
+        forkNames.RepositoryIdentifiers.Should().Contain(new RepositoryIdentifier("jskoven", "lecture-code"));
     }
 
     [Fact(Skip = "Takes up a lot of requests")]
