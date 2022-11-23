@@ -67,6 +67,6 @@ A test suit is included with the program.
 For testing with remote repositories, real active repos are used.
 This enables easy testing, since the repositories already exists, but requires that they are not removed, made inaccessible or significantly changed.
 The tests are mainly unit tests, with some integration tests where necessary.
-There are, currently, no end to end tests of the program.
+There are, currently, no end-to-end tests of the program.
 
 ## Quality management
