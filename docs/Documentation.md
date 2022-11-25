@@ -19,7 +19,7 @@ A Class diagram, detailing most of the the classes of the program, is shown belo
 An overview of the packages that the program consist of, is shown below.
 ![Package Diagram](img/PackageDiagram.png)
 
-An activity diagram of the back end is shown below. It details the back ends process to download and analyse remote repositories.
+An activity diagram of the backend is shown below. It details the backends process to download and analyse remote repositories.
 ![Activity Diagram](img/ActivityDiagram.png)
 
 ## RESTful WEB API
