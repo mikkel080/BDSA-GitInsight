@@ -1,9 +1,9 @@
 ﻿namespace GitInsight;
 
-using LibGit2Sharp;
-using LibGit2Sharp.Handlers;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 public sealed class Program
 {
@@ -56,7 +56,9 @@ public sealed class Program
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
 
-            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!), Formatting.Indented);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!);
+            return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
 
@@ -146,15 +148,15 @@ public sealed class Program
             var pageSettings = $"?page={page}&per_page={perPage}";
             var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks{pageSettings}";
             var json = client.GetStringAsync(url);
-            var result = (Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(json.Result)!;
+            var result = JsonSerializer.Deserialize<JsonNode>(json.Result);
 
-            foreach (var entry in result)
+            foreach (var entry in result!.AsArray())
             {
-                foreach (Newtonsoft.Json.Linq.JProperty? item in entry.Values<Newtonsoft.Json.Linq.JProperty>())
+                foreach (var item in entry!.AsArray())
                 {
-                    if (item!.Name == "full_name")
+                    if (item!.AsValue().ToString() == "full_name")
                     {
-                        forks.Add(item!.Value.ToString());
+                        forks.Add(item!.AsValue().ToString());
                     }
                 }
             }

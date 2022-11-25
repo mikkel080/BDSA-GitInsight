@@ -1,5 +1,4 @@
-
 global using GitInsight.Core;
 global using GitInsight.Entities;
-global using Newtonsoft.Json;
-
+global using LibGit2Sharp;
+global using LibGit2Sharp.Handlers;
