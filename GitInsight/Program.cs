@@ -152,11 +152,11 @@ public sealed class Program
 
             foreach (var entry in result!.AsArray())
             {
-                foreach (var item in entry!.AsArray())
+                foreach (var item in entry!.AsObject())
                 {
-                    if (item!.AsValue().ToString() == "full_name")
+                    if (item!.Key == "full_name")
                     {
-                        forks.Add(item!.AsValue().ToString());
+                        forks.Add(item!.Value!.ToString());
                     }
                 }
             }
