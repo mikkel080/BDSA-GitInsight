@@ -4,22 +4,10 @@ public class AuthorResult
 {
     public IEnumerable<Entry> Data { get; }
     public string RepoName { get; }
-    public AuthorResult(IEnumerable<CommitDTO> list, string RepoName)
+    public AuthorResult(IEnumerable<Entry> data, string repoName)
     {
-        Data = new List<Entry>();
-        this.RepoName = RepoName;
-        var q = list.GroupBy(
-            (item => item.AuthorName),
-            (key, elements) => new
-            {
-                key = key,
-                items = elements
-            }
-        );
-        foreach (var commit in q)
-        {
-            Data = Data.Append(new Entry(commit.key, new FrequencyResult(commit.items, RepoName)));
-        }
+        Data = data;
+        RepoName = repoName;
     }
     public List<String> ToStringList()
     {

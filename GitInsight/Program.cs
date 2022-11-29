@@ -11,6 +11,7 @@ public sealed class Program
     private readonly AuthorRepository _repositoryAuthor;
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
+    private ResultHandler _resultHandler;
 
     public Program(GitInsightContext context)
     {
@@ -18,6 +19,7 @@ public sealed class Program
         _repositoryAuthor = new AuthorRepository(_context);
         _repositoryCommit = new CommitRepository(_context);
         _repositoryRepos = new RepoRepository(_context);
+        _resultHandler = new ResultHandler(_context, _repositoryCommit, _repositoryRepos);
     }
 
     public string getPathOrCloneRepo(string githubName, string repoName)
@@ -107,8 +109,7 @@ public sealed class Program
             var reponseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
         }
         var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
-
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits)).Result;
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
     void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
@@ -124,7 +125,7 @@ public sealed class Program
                 var responseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
             }
         }
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
     public IEnumerable<String> forkAnalysis(string githubName, string repoName)
