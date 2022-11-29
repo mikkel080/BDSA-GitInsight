@@ -18,6 +18,11 @@
     <option value="c">Commit</option>
 </select>
 
+<p></p>
+
+<label>Fetch from REST API?</label>
+<input type="checkbox" @bind="doAPIFetch"/>
+
 <p>Mode has the current value: @mode</p>
 
 <button class="btn btn-primary" @onclick="@fetchAnalysis">Get Analysis</button>

@@ -21,6 +21,8 @@ namespace GitInsight.Blazor.Pages
         private string mode { get; set; } = "";
         private Rootobject poco { get; set; }
 
+        private bool doAPIFetch { get; set; } = false;
+
 
         private async void fetchAnalysis()
         {
@@ -29,9 +31,8 @@ namespace GitInsight.Blazor.Pages
                 return;
 
 
-            if (false)
+            if (doAPIFetch)
             {
-
                 var request = new HttpRequestMessage(HttpMethod.Get,
                 $"https://localhost:7199/{org}/{proj}");
                 /*request.Headers.Add("Accept", "application/vnd.github.v3+json");
