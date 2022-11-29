@@ -15,13 +15,7 @@ public class ForkTest
 
     }
 
-    [Fact]
-    public void testTheTruth()
-    {
-        true.Should().Be(true);
-    }
-
-    [Fact(Skip = "Unable to use Secrets with Github Actions at the moment")]
+    [Fact(Skip = "Not implemented fully")]
     public void analysisReturnsSomethingAtAll()
     {
         var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");

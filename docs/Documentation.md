@@ -5,16 +5,22 @@
 ## Introduction
 
 This is a ever evolving application that facilitates analysis of git repositories.
-It supports both repositories that are hosted locally and on GitHub.com.
-The application exposes a WEB API, and a web page where the insights and analysis results can be accessed.
+The analysis pertains mostly to commits, who made them and when, and who has made forks of the repositories.
+It supports exclusively repositories that are hosted on GitHub.com.
+The application exposes a REST API, and a web page where the insights and analysis results can be accessed.
 
 ## Architecture
 
 <!-- Describe the Architecture, both of the systems themselves, and between them -->
 
-A Class diagram, detailing some of the the classes of the program, is shown below.
-The diagram also shows one of the programs namespaces or packages.
-![Class diagram](ClassDiagram.png)
+A Class diagram, detailing most of the the classes of the program, is shown below.
+![Class diagram](img/ClassDiagramW45.png)
+
+An overview of the packages that the program consist of, is shown below.
+![Package Diagram](img/PackageDiagram.png)
+
+An activity diagram of the backend is shown below. It details the backends process to download and analyse remote repositories.
+![Activity Diagram](img/ActivityDiagram.png)
 
 ## RESTful WEB API
 
@@ -31,22 +37,44 @@ At the moment it only lists direct forks and not forks of forks, and so on.
 
 The REST API exposes the analysis to the API caller, packaged in a labeled JSON object.
 
+### JSON Object
+
+An example JSON Object that has been build by the API can be seen [here](JSONExample.md).
+It is a JSON Object that contains information about the repository, and the analysis described previously.
+
+### GitHub API Key
+
+The program needs to interface with the official GitHub REST API.
+GitHub requires that users of their API are authenticated to use the API.
+As such, users of the program need to supply a GitHub personal access token to the program.
+This can be done in one of two ways.
+It can be supplied as a user-secret, or as an environment variable, or both.
+If both exist, the user-secret will be used.
+In all cases, the key of the pair must be `GITHUBAPI`, and the value must be the token.
+The token can be generated on GitHub.
+See their [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
 ## Authentication and access
 
 ## Web page and illustrations
 
 ## Database
 
-<!-- Document what the database contains, and when it is updated. 
-Also write that it is an in-memory database and is not persistent -->
-To start the database use command in commandline -> docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
-The database contains information about the results from the analysis, the GitHub Repository, it's commits and the authors. We use DTO's to transfer data to and from the database.
+To start the database, run the following command in a terminal of you choice, with Docker installed.
+
+`docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<YourStrong@Passw0rd>" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest`
+
+The database contains information about the results from the analysis, the GitHub Repository, it's commits and the authors.
+We use Data Transfer Objects to transfer data to and from the database.
+The database is a relational database, build using Microsoft SQL Server.
+It runs locally in a docker container, and therefore needs a local installation of docker to run.
 
 ## Tests
 
 A test suit is included with the program.
-A sample git directory is included with the program tests, to facilitate testing and verification.
 For testing with remote repositories, real active repos are used.
 This enables easy testing, since the repositories already exists, but requires that they are not removed, made inaccessible or significantly changed.
+The tests are mainly unit tests, with some integration tests where necessary.
+There are, currently, no end-to-end tests of the program.
 
 ## Quality management
