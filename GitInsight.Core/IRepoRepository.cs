@@ -2,9 +2,9 @@ namespace GitInsight.Core;
 
 public interface IRepoRepository
 {
-    (Response Response, int RepoID) Create(RepoCreateDTO repo);
-    IReadOnlyCollection<RepoDTO> Read();
-    RepoDTO Find(int repoId);
-    Response Update(RepoUpdateDTO repo);
-    Response Delete(int repoId);
+    Task<(Response Response, int RepoID)> CreateAsync(RepoCreateDTO repo);
+    Task<IReadOnlyCollection<RepoDTO>> ReadAsync();
+    Task<RepoDTO> FindAsync(int repoId);
+    Task<Response> UpdateAsync(RepoUpdateDTO repo);
+    Task<Response> DeleteAsync(int repoId);
 }

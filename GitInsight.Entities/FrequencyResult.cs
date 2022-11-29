@@ -3,13 +3,11 @@ namespace GitInsight.Entities;
 public class FrequencyResult
 {
     public IEnumerable<EntryF> Data { get; }
-    public string RepoName { get; }
     public FrequencyResult(IEnumerable<Commit> list, string RepoName)
     {
         Data = new List<EntryF>();
-        this.RepoName = RepoName;
         var q = list.GroupBy(
-            (item => item.Date),
+            (item => item.Date.Date),
             (key, elements) => new
             {
                 key = key,
