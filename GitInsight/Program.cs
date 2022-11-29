@@ -57,7 +57,8 @@ public sealed class Program
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
             
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!);
+            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
+            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
