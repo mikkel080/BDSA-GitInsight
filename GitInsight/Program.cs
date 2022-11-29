@@ -1,4 +1,4 @@
-﻿namespace GitInsight;
+namespace GitInsight;
 
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
@@ -55,10 +55,11 @@ public sealed class Program
 
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
+            var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
-            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
+            var ForkResult = forkAnalysis(githubName, repoName);
+            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
@@ -130,7 +131,7 @@ public sealed class Program
         var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
     }
 
-    public IEnumerable<String> forkAnalysis(string githubName, string repoName)
+    public ForkResult forkAnalysis(string githubName, string repoName)
     {
         using HttpClient client = new();
 
@@ -148,8 +149,8 @@ public sealed class Program
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
 
         var perPage = 100;
-        int page = 0;
-        List<String> forks = new List<String>();
+        var page = 0;
+        var forks = new List<RepositoryIdentifier>();
         while (forks.Count >= page * perPage)
         {
             page++;
@@ -164,14 +165,19 @@ public sealed class Program
                 {
                     if (item!.Key == "full_name")
                     {
-                        forks.Add(item!.Value!.ToString());
+                        var value = item!.Value!.ToString().Split("/");
+                        var Organization = value[0];
+                        var Repository = value[1];
+                        var element = new RepositoryIdentifier(Organization, Repository);
+                        forks.Add(element);
                     }
                 }
             }
         }
-        return forks;
+        return new ForkResult(forks);
     }
 }
 
-public record ForkResult(IEnumerable<String> Forks);
-public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
+public record CombinedResult(RepositoryIdentifier RepositoryIdentifier, FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
+public record RepositoryIdentifier(string Organization, string Repository);
+public record ForkResult(IEnumerable<RepositoryIdentifier> RepositoryIdentifiers);
