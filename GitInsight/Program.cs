@@ -55,7 +55,7 @@ public sealed class Program
 
             //Cursed but easy way to get results
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
-            
+
             var options = new JsonSerializerOptions { WriteIndented = true };
             var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
             var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
