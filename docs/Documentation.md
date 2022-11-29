@@ -12,7 +12,7 @@ The application exposes a REST API, and a web page where the insights and analys
 ## Architecture
 
 <!-- Describe the Architecture, both of the systems themselves, and between them -->
-s
+
 A Class diagram, detailing most of the the classes of the program, is shown below.
 ![Class diagram](img/ClassDiagramW45.png)
 
