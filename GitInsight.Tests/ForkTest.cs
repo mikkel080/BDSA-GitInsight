@@ -15,7 +15,7 @@ public class ForkTest
 
     }
 
-    [Fact(Skip = "Not implemented fully")]
+    [Fact]
     public void analysisReturnsSomethingAtAll()
     {
         var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
@@ -27,9 +27,16 @@ public class ForkTest
     }
 
     [Fact(Skip = "Takes up a lot of requests")]
-    public void analysisResultForLargeRepository()
+    public void analysisResultReturnsNumberHigherThanPageCount()
     {
         var forkNames = program.forkAnalysis("processing", "p5.js");
         forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(2000);
+    }
+
+    [Fact]
+    public void RESTfulAPIIncludesForkInfo()
+    {
+        var forkNames = program.Run("itu-bdsa", "lecture-code");
+        forkNames.Should().Contain("jskoven/lecture-code");
     }
 }

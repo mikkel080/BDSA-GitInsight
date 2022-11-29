@@ -1,4 +1,4 @@
-﻿namespace GitInsight;
+namespace GitInsight;
 
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
@@ -58,7 +58,8 @@ public sealed class Program
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!);
+            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
+            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
@@ -135,7 +136,14 @@ public sealed class Program
         using HttpClient client = new();
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var secret = configuration.GetSection("GITHUBAPI").Value;
+        var secret = configuration["GITHUBAPI"];
+
+        var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
+
+        if (secret == null)
+        {
+            secret = envSecret;
+        }
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);

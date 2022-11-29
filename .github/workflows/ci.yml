@@ -1,6 +1,9 @@
 ---
 name: Build and Test
 
+env:
+  GITHUBAPI: ${{secrets.GITHUB_TOKEN}}
+
 on:
   push:
     branches:
