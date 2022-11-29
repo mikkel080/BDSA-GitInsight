@@ -16,26 +16,27 @@ public class ForkTest
     }
 
     [Fact]
-    public void testTheTruth()
-    {
-        true.Should().Be(true);
-    }
-
-    [Fact(Skip = "Unable to use Secrets with Github Actions at the moment")]
     public void analysisReturnsSomethingAtAll()
     {
         var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
 
         forkNames.Should().NotBeNull();
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(1);
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(9);
-        forkNames.Should().Contain("jskoven/lecture-code");
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(1);
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(9);
+        forkNames.RepositoryIdentifiers.Should().Contain(new RepositoryIdentifier("jskoven", "lecture-code"));
     }
 
     [Fact(Skip = "Takes up a lot of requests")]
-    public void analysisResultForLargeRepository()
+    public void analysisResultReturnsNumberHigherThanPageCount()
     {
         var forkNames = program.forkAnalysis("processing", "p5.js");
-        forkNames.Count().Should().BeGreaterThanOrEqualTo(2000);
+        forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(2000);
+    }
+
+    [Fact]
+    public void RESTfulAPIIncludesForkInfo()
+    {
+        var forkNames = program.Run("itu-bdsa", "lecture-code");
+        forkNames.Should().Contain("jskoven");
     }
 }
