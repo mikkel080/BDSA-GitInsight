@@ -1,10 +1,10 @@
-namespace GitInsight.Entities;
+namespace GitInsight.Core;
 
 public class FrequencyResult
 {
     public IEnumerable<EntryF> Data { get; }
     public string RepoName { get; }
-    public FrequencyResult(IEnumerable<Commit> list, string RepoName)
+    public FrequencyResult(IEnumerable<CommitDTO> list, string RepoName)
     {
         Data = new List<EntryF>();
         this.RepoName = RepoName;

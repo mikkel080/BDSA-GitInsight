@@ -33,7 +33,7 @@ public class RepoRepository : IRepoRepository
     {
         var repos = from r in _context.Repos
                     orderby r.Id
-                    select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList());
+                    select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList(), r.AuthorResult!, r.FrequencyResult!);
 
         return await repos.ToArrayAsync();
     }
@@ -42,7 +42,7 @@ public class RepoRepository : IRepoRepository
     {
         var repo = await (from r in _context.Repos
                           where r.Id == repoId
-                          select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList())).FirstOrDefaultAsync();
+                          select new RepoDTO(r.Id, r.Name, r.LatestCommit, r.AllCommits.Select(c => c.Id).ToList(), r.AuthorResult!, r.FrequencyResult!)).FirstOrDefaultAsync();
 
         return repo!;
     }
@@ -62,9 +62,8 @@ public class RepoRepository : IRepoRepository
                 repo.Name = repoUpdate.Name;
             }
 
-            //Set results
-            repo.FrequencyResult = new FrequencyResult(repo.AllCommits, repo.Name);
-            repo.AuthorResult = new AuthorResult(repo.AllCommits, repo.Name);
+            repo.AuthorResult = repoUpdate.AuthorResult;
+            repo.FrequencyResult = repoUpdate.FrequencyResult;
 
             await _context.SaveChangesAsync();
 

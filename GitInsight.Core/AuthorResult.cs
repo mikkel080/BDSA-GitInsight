@@ -1,15 +1,15 @@
-namespace GitInsight.Entities;
+namespace GitInsight.Core;
 
 public class AuthorResult
 {
     public IEnumerable<Entry> Data { get; }
     public string RepoName { get; }
-    public AuthorResult(IEnumerable<Commit> list, string RepoName)
+    public AuthorResult(IEnumerable<CommitDTO> list, string RepoName)
     {
         Data = new List<Entry>();
         this.RepoName = RepoName;
         var q = list.GroupBy(
-            (item => item.Author.Name),
+            (item => item.AuthorName),
             (key, elements) => new
             {
                 key = key,

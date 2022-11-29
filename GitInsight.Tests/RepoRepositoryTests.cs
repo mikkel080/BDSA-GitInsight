@@ -115,7 +115,7 @@ public sealed class RepoRepositoryTests : IDisposable
     {
         // Arrange
         await _repository.CreateAsync(new RepoCreateDTO("name", new List<int>()));
-        var repoUpdate = new RepoUpdateDTO(2, "new name", 0, new List<int>());
+        var repoUpdate = new RepoUpdateDTO(2, "new name", 0, new List<int>(), null, null);
 
         // Act
         var response = await _repository.UpdateAsync(repoUpdate);
@@ -131,7 +131,7 @@ public sealed class RepoRepositoryTests : IDisposable
     {
         // Arrange
 
-        var repoUpdate = new RepoUpdateDTO(100, "name", 0, new List<int>() { 2 });
+        var repoUpdate = new RepoUpdateDTO(100, "name", 0, new List<int>() { 2 }, null, null);
 
         // Act
         var response = await _repository.UpdateAsync(repoUpdate);
