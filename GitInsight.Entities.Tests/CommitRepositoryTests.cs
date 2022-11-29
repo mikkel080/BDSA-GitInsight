@@ -5,7 +5,8 @@ public sealed class CommitRepositoryTests : IDisposable
     private readonly GitInsightContext _context;
     private readonly CommitRepository _repository;
 
-    public CommitRepositoryTests() {
+    public CommitRepositoryTests()
+    {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<GitInsightContext>();
@@ -21,19 +22,20 @@ public sealed class CommitRepositoryTests : IDisposable
     public void Dispose()
     {
         _context.Dispose();
-    } 
+    }
 
     [Fact]
-    public void Create_commit_returns_created(){
-      
+    public void Create_commit_returns_created()
+    {
+
         //Arrange
         var newcommitDTO = new CommitCreateDTO(1, "nameAuthor", new DateTime());
 
         // Act
         var (response, newCommitId) = _repository.Create(newcommitDTO);
         var newAuthor = (from a in _context.Authors
-                        where a.Name == newcommitDTO.AuthorName
-                        select a).First();
+                         where a.Name == newcommitDTO.AuthorName
+                         select a).First();
 
         // Assert
         newAuthor.Id.Should().Be(1);
@@ -43,7 +45,8 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_commit_returns_conflict(){
+    public void Create_commit_returns_conflict()
+    {
         // Arrange
         var firstCommitDTO = new CommitCreateDTO(2, "name", new DateTime());
 
@@ -56,7 +59,8 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_commit_count_0() {
+    public void Read_commit_count_0()
+    {
         // Arrange
 
         // Act
@@ -67,7 +71,8 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Read_commit_count_1() {
+    public void Read_commit_count_1()
+    {
         // Arrange
 
         _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
@@ -80,10 +85,11 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Commit_find_found() {
+    public void Commit_find_found()
+    {
         // Arrange
         _repository.Create(new CommitCreateDTO(1, "name", DateTime.Now));
-        
+
         // Act
         var commitInRepo = _repository.Find(1);
 
@@ -94,9 +100,10 @@ public sealed class CommitRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void commit_find_not_found() {
+    public void commit_find_not_found()
+    {
         // Arrange
-        
+
         // Act
         var commit = _repository.Find(100);
 
