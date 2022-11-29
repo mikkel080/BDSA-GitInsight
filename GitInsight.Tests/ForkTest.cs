@@ -16,13 +16,7 @@ public class ForkTest
     }
 
     [Fact]
-    public void testTheTruth()
-    {
-        true.Should().Be(true);
-    }
-
-    [Fact]
-    public void analysisReturnsMoreThanZeroForksGivenAForkedRepository()
+    public void analysisReturnsSomethingAtAll()
     {
         var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
 
