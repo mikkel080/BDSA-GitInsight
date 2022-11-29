@@ -14,7 +14,13 @@ The application exposes a REST API, and a web page where the insights and analys
 <!-- Describe the Architecture, both of the systems themselves, and between them -->
 
 A Class diagram, detailing most of the the classes of the program, is shown below.
-![Class diagram](ClassDiagram"45.png)
+![Class diagram](img/ClassDiagramW45.png)
+
+An overview of the packages that the program consist of, is shown below.
+![Package Diagram](img/PackageDiagram.png)
+
+An activity diagram of the backend is shown below. It details the backends process to download and analyse remote repositories.
+![Activity Diagram](img/ActivityDiagram.png)
 
 ## RESTful WEB API
 
