@@ -57,7 +57,8 @@ public sealed class Program
             var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
 
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!);
+            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
+            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
@@ -134,7 +135,14 @@ public sealed class Program
         using HttpClient client = new();
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var secret = configuration.GetSection("GITHUBAPI").Value;
+        var secret = configuration["GITHUBAPI"];
+
+        var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
+
+        if (secret == null)
+        {
+            secret = envSecret;
+        }
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
@@ -165,4 +173,5 @@ public sealed class Program
     }
 }
 
-public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult);
+public record ForkResult(IEnumerable<String> Forks);
+public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
