@@ -58,8 +58,8 @@ public sealed class Program
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var ForkResult = new ForkResult(forkAnalysis(githubName, repoName));
-            var CombinedResult = new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
+            var ForkResult = forkAnalysis(githubName, repoName);
+            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
@@ -165,7 +165,7 @@ public sealed class Program
                 {
                     if (item!.Key == "full_name")
                     {
-                        var value = item!.Value.ToString().Split("/");
+                        var value = item!.Value!.ToString().Split("/");
                         var Organization = value[0];
                         var Repository = value[1];
                         var element = new RepositoryIdentifier(Organization, Repository);
