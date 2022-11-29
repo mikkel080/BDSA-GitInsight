@@ -1,0 +1,26 @@
+﻿@page "/insight"
+@page "/insight/{org}/{proj}"
+
+
+<h3>InsightPage</h3>
+
+
+@if(true)
+{
+    <p>Test</p>
+    <input @bind="proj" />
+    <input @bind="org"/>
+}
+
+<label>Which mode do you wan the analysis to be in</label>
+<select @bind="mode">
+    <option value="a">Author</option>
+    <option value="c">Commit</option>
+</select>
+
+<p>Mode has the current value: @mode</p>
+
+<button class="btn btn-primary" @onclick="@fetchAnalysis">Get Analysis</button>
+
+
+@*<p>Display the analysis</p>*@

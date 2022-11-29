@@ -11,9 +11,9 @@ public class CommitRepository : ICommitRepository
         _context = context;
     }
 
-    public (Response Response, int CommitID) Create(CommitCreateDTO commit)
+    public async Task<(Response Response, int CommitID)> CreateAsync(CommitCreateDTO commit)
     {
-        var repo = _context.Repos.FirstOrDefault(r => r.Id == commit.RepoID);
+        var repo = await _context.Repos.FirstOrDefaultAsync(r => r.Id == commit.RepoID);
 
         if (repo is null)
         {
@@ -23,40 +23,33 @@ public class CommitRepository : ICommitRepository
         var entity = new Commit()
         {
             Repo = repo,
-            Author = FindOrCreateAuthor(commit.AuthorName),
+            Author = await FindOrCreateAuthorAsync(commit.AuthorName),
             Date = commit.Date
         };
         _context.Commits.Add(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return (Response.Created, entity.Id);
     }
 
-    public IReadOnlyCollection<CommitDTO> Read()
+    public async Task<IReadOnlyCollection<CommitDTO>> ReadAsync()
     {
         var commits = from c in _context.Commits
                       select new CommitDTO(c.Id, c.Repo.Id, c.Author.Name, c.Date);
-        return commits.ToList();
+        return await commits.ToListAsync();
     }
 
-    public CommitDTO Find(int commitId)
+    public async Task<CommitDTO> FindAsync(int commitId)
     {
-        var commit = (from c in _context.Commits
-                      where c.Id == commitId
-                      select c).FirstOrDefault();
-        if (commit is null)
-        {
-            return null!;
-        }
-        else
-        {
-            return new CommitDTO(commit.Id, commit.Repo.Id, commit.Author.Name, commit.Date);
-        }
+        var commit = await (from c in _context.Commits
+                            where c.Id == commitId
+                            select new CommitDTO(c.Id, c.Repo.Id, c.Author.Name, c.Date)).FirstOrDefaultAsync();
+        return commit!;
     }
 
-    public Response Delete(int commitId)
+    public async Task<Response> DeleteAsync(int commitId)
     {
-        var entity = _context.Commits.Find(commitId);
+        var entity = await _context.Commits.FindAsync(commitId);
 
         if (entity is null)
         {
@@ -64,11 +57,11 @@ public class CommitRepository : ICommitRepository
         }
 
         _context.Commits.Remove(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Response.Deleted;
     }
 
-    private Author FindOrCreateAuthor(string name) => _context.Authors.Where(a => a.Name == name).FirstOrDefault() ?? new Author(name);
+    private async Task<Author> FindOrCreateAuthorAsync(string name) => await _context.Authors.Where(a => a.Name == name).FirstOrDefaultAsync() ?? new Author(name);
 
 }

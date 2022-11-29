@@ -24,13 +24,13 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_author_returns_created()
+    public async void Create_author_returns_created_async()
     {
         // Arrange
         var newAuthorDTO = new AuthorCreateDTO("name", new List<int>());
 
         // Act
-        var (response, newAuthorId) = _repository.Create(newAuthorDTO);
+        var (response, newAuthorId) = await _repository.CreateAsync(newAuthorDTO);
 
         // Assert
         response.Should().Be(Response.Created);
@@ -38,55 +38,55 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Create_author_returns_conflict()
+    public async void Create_author_returns_conflict_async()
     {
         // Arrange
         var name = "name";
-        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
+        await _repository.CreateAsync(new AuthorCreateDTO(name, new List<int>()));
 
         var secondAuthorDTO = new AuthorCreateDTO(name, new List<int>());
 
         // Act
-        var (response, secondAuthorId) = _repository.Create(secondAuthorDTO);
+        var (response, secondAuthorId) = await _repository.CreateAsync(secondAuthorDTO);
 
         // Assert
         response.Should().Be(Response.Conflict);
     }
 
     [Fact]
-    public void Read_author_count_0()
+    public async void Read_author_count_0_async()
     {
         // Arrange
 
         // Act
-        var authorList = _repository.Read();
+        var authorList = await _repository.ReadAsync();
 
         // Assert
         authorList.Count().Should().Be(0);
     }
 
     [Fact]
-    public void Read_author_count_1()
+    public async void Read_author_count_1_async()
     {
         // Arrange
-        _repository.Create(new AuthorCreateDTO("name", new List<int>()));
+        await _repository.CreateAsync(new AuthorCreateDTO("name", new List<int>()));
 
         // Act
-        var authorList = _repository.Read();
+        var authorList = await _repository.ReadAsync();
 
         // Assert
         authorList.Count().Should().Be(1);
     }
 
     [Fact]
-    public void Author_find_found()
+    public async void Author_find_found_async()
     {
         // Arrange
         var name = "name";
-        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
+        await _repository.CreateAsync(new AuthorCreateDTO(name, new List<int>()));
 
         // Act
-        var authorInRepo = _repository.Find(1);
+        var authorInRepo = await _repository.FindAsync(1);
 
         // Assert
         authorInRepo.Id.Should().Be(1);
@@ -94,68 +94,68 @@ public sealed class AuthorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public void Author_find_not_found()
+    public async void Author_find_not_found_async()
     {
         // Arrange
 
         // Act
-        var author = _repository.Find(100);
+        var author = await _repository.FindAsync(100);
 
         // Assert
         author.Should().BeNull();
     }
 
     [Fact]
-    public void Update_existing_author()
+    public async void Update_existing_author_async()
     {
         // Arrange
         var name = "name";
-        _repository.Create(new AuthorCreateDTO(name, new List<int>()));
+        await _repository.CreateAsync(new AuthorCreateDTO(name, new List<int>()));
 
         var authorUpdate = new AuthorUpdateDTO(1, name, new List<int>());
 
         // Act
-        var response = _repository.Update(authorUpdate);
+        var response = await _repository.UpdateAsync(authorUpdate);
 
         // Assert
         response.Should().Be(Response.Updated);
     }
 
     [Fact]
-    public void Update_non_existing_author()
+    public async void Update_non_existing_author_async()
     {
         // Arrange
         var author = new AuthorUpdateDTO(100, "name", new List<int>());
 
         // Act
-        var response = _repository.Update(author);
+        var response = await _repository.UpdateAsync(author);
 
         // Assert
         response.Should().Be(Response.NotFound);
     }
 
     [Fact]
-    public void Delete_author()
+    public async void Delete_author_async()
     {
         // Arrange
         var newAuthor = new Author("name");
         _context.Authors.Add(newAuthor);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         // Act
-        var response = _repository.Delete(1);
+        var response = await _repository.DeleteAsync(1);
 
         // Assert
         response.Should().Be(Response.Deleted);
     }
 
     [Fact]
-    public void Delete_nonexistant_author()
+    public async void Delete_nonexistant_author_async()
     {
         // Arrange
 
         // Act
-        var response = _repository.Delete(100);
+        var response = await _repository.DeleteAsync(100);
 
         // Assert
         response.Should().Be(Response.NotFound);
