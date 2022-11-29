@@ -55,13 +55,12 @@ public sealed class Program
             CheckForGitUpdates(repo);
             repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
-            //Cursed but easy way to get results
-            var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
+            var repoDTO= _repositoryRepos.FindAsync(repoId).Result;
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var ForkResult = forkAnalysis(githubName, repoName);
-            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
+            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoDTO.FrequencyResult!, repoDTO.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
