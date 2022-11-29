@@ -26,25 +26,12 @@ public sealed class Program
     {
         //Temp folders does not get deleted themselves so remember to delete
         var path = Path.GetTempPath();
-        string existingPath;
-        if (path.Contains(@"\"))
-        {
-            existingPath = path + @$"\{repoName}";
-        }
-        else
-        {
-            existingPath = path + @$"/{repoName}";
-
-        }
-        if (!Directory.Exists(existingPath))
+        string existingPath = path + @$"{repoName}";
+        if (!Directory.Exists(existingPath) || !Repository.IsValid(existingPath))
         {
             return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
         }
-        else if (Repository.IsValid(existingPath))
-        {
-            return existingPath;
-        }
-        return "";
+        return existingPath;
     }
 
     public string Run(string githubName, string repoName)
