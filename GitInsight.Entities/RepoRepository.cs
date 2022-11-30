@@ -23,7 +23,8 @@ public class RepoRepository : IRepoRepository
         }
         else
         {
-            return (Response.Conflict, newRepo.Id);
+            _context.Entry(newRepo).Collection(r => r.AllCommits).Load();
+            return (Response.AlreadyExists, newRepo.Id);
         }
 
         return (Response.Created, newRepo.Id);

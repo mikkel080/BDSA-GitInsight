@@ -1,4 +1,4 @@
-namespace GitInsight;
+﻿namespace GitInsight;
 
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
@@ -75,24 +75,26 @@ public sealed class Program
 
     int CreateOrUpdateData(Repository repo, string RepoName)
     {
-        var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;
+        var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;      
+   
         if (response == Response.Created)
         {
-            SaveDataAsync(repo, repoId);
+            SaveData(repo, repoId);
         }
-        else
+        
+        else if (response == Response.AlreadyExists)
         {
             var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var latestDate = _repositoryCommit.FindAsync(repoDTO.LatestCommit).Result;
-            if (repo.Commits.First().Author.When.DateTime != latestDate.Date)
+            if (repo.Commits.First().Author.When.DateTime.Date != latestDate.Date)
             {
-                UpdateDataAsync(repo, repoId, repoDTO);
+                UpdateData(repo, repoId, repoDTO);
             }
         }
         return repoId;
     }
 
-    void SaveDataAsync(Repository repo, int repoId)
+    void SaveData(Repository repo, int repoId)
     {
         foreach (var commit in repo.Commits.ToList())
         {
@@ -102,7 +104,7 @@ public sealed class Program
         _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
-    void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
+    void UpdateData(Repository repo, int repoId, RepoDTO repoDTO)
     {
         var allCommits = _repositoryCommit.ReadAsync().Result;
         var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
