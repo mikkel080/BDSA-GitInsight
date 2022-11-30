@@ -56,8 +56,6 @@ See their [documentation](https://docs.github.com/en/authentication/keeping-your
 
 ## Authentication and access
 
-### GitHub API Key
-
 ## Web page and illustrations
 
 ## Database
