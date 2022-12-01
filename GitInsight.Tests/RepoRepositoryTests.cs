@@ -59,7 +59,7 @@ public sealed class RepoRepositoryTests : IDisposable
 
         // Assert
         Assert.Equal(Response.Created, response_1);
-        Assert.Equal(Response.Conflict, response_2);
+        Assert.Equal(Response.AlreadyExists, response_2);
     }
 
     [Fact]

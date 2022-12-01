@@ -1,4 +1,3 @@
-//Learn more about minimal api -> https://learn.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-7.0&tabs=visual-studio-code
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +12,12 @@ builder.Services.AddDbContext<GitInsightContext>(options => options.UseSqlServer
 builder.Services.AddScoped<IRepoRepository, RepoRepository>();
 builder.Services.AddScoped<ICommitRepository, CommitRepository>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+
+
+// Add services to the container.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -29,7 +34,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Write GitHub username and GitHub repo name in the url!");
+app.UseAuthentication();
+app.UseAuthorization();
+
+var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
+
+
+app.MapGet("/", () => {
+    return "Write GitHub username and GitHub repo name in the url! ";
+}).WithOpenApi();
 app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitInsightContext context) =>
 {
     var program = new GitInsight.Program(context);
@@ -38,5 +51,6 @@ app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitI
 
 app.Run();
 
-public partial class ProgramAPI { }
+public partial class ProgramMinimalAPI { }
+
 
