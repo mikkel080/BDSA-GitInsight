@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Core", "GitInsig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Entities", "GitInsight.Entities\GitInsight.Entities.csproj", "{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Api", "GitInsight.Api\GitInsight.Api.csproj", "{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Api", "GitInsight.Api\GitInsight.Api.csproj", "{E710FF18-D15A-475F-A52E-9BA5CA8D6271}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,14 +35,10 @@ Global
 		{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A728CEE3-F3BB-4A4F-B3A8-8611267101E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37A3ABC2-BC93-47A5-992F-B5A5AFA91EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E710FF18-D15A-475F-A52E-9BA5CA8D6271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E710FF18-D15A-475F-A52E-9BA5CA8D6271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E710FF18-D15A-475F-A52E-9BA5CA8D6271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E710FF18-D15A-475F-A52E-9BA5CA8D6271}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

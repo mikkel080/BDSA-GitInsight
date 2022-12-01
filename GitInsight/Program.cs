@@ -1,4 +1,4 @@
-namespace GitInsight;
+﻿namespace GitInsight;
 
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +11,7 @@ public sealed class Program
     private readonly AuthorRepository _repositoryAuthor;
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
+    private ResultHandler _resultHandler;
 
     public Program(GitInsightContext context)
     {
@@ -18,31 +19,19 @@ public sealed class Program
         _repositoryAuthor = new AuthorRepository(_context);
         _repositoryCommit = new CommitRepository(_context);
         _repositoryRepos = new RepoRepository(_context);
+        _resultHandler = new ResultHandler(_context, _repositoryCommit, _repositoryRepos);
     }
 
     public string getPathOrCloneRepo(string githubName, string repoName)
     {
         //Temp folders does not get deleted themselves so remember to delete
         var path = Path.GetTempPath();
-        string existingPath;
-        if (path.Contains(@"\"))
-        {
-            existingPath = path + @$"\{repoName}";
-        }
-        else
-        {
-            existingPath = path + @$"/{repoName}";
-
-        }
-        if (!Directory.Exists(existingPath))
+        string existingPath = path + @$"{repoName}";
+        if (!Directory.Exists(existingPath) || !Repository.IsValid(existingPath))
         {
             return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
         }
-        else if (Repository.IsValid(existingPath))
-        {
-            return existingPath;
-        }
-        return "";
+        return existingPath;
     }
 
     public string Run(string githubName, string repoName)
@@ -53,13 +42,12 @@ public sealed class Program
             CheckForGitUpdates(repo);
             repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
-            //Cursed but easy way to get results
-            var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
+            var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var ForkResult = forkAnalysis(githubName, repoName);
-            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoObject.FrequencyResult!, repoObject.AuthorResult!, ForkResult);
+            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoDTO.FrequencyResult!, repoDTO.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
@@ -88,34 +76,35 @@ public sealed class Program
     int CreateOrUpdateData(Repository repo, string RepoName)
     {
         var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;
+
         if (response == Response.Created)
         {
-            SaveDataAsync(repo, repoId);
+            SaveData(repo, repoId);
         }
-        else
+
+        else if (response == Response.AlreadyExists)
         {
             var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var latestDate = _repositoryCommit.FindAsync(repoDTO.LatestCommit).Result;
-            if (repo.Commits.First().Author.When.DateTime != latestDate.Date)
+            if (repo.Commits.First().Author.When.DateTime.Date != latestDate.Date)
             {
-                UpdateDataAsync(repo, repoId, repoDTO);
+                UpdateData(repo, repoId, repoDTO);
             }
         }
         return repoId;
     }
 
-    void SaveDataAsync(Repository repo, int repoId)
+    void SaveData(Repository repo, int repoId)
     {
         foreach (var commit in repo.Commits.ToList())
         {
             var reponseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
         }
         var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
-
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits)).Result;
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
-    void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
+    void UpdateData(Repository repo, int repoId, RepoDTO repoDTO)
     {
         var allCommits = _repositoryCommit.ReadAsync().Result;
         var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
@@ -128,7 +117,7 @@ public sealed class Program
                 var responseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
             }
         }
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
     public ForkResult forkAnalysis(string githubName, string repoName)

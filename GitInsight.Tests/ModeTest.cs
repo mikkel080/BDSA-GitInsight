@@ -19,7 +19,7 @@ public class ModeTest
     }
 
     [Fact]
-    public void CommitFrequencyAsync()
+    public void CommitFrequency()
     {
         var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
 
