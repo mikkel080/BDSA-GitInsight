@@ -9,6 +9,18 @@ The analysis pertains mostly to commits, who made them and when, and who has mad
 It supports exclusively repositories that are hosted on GitHub.com.
 The application exposes a REST API, and a web page where the insights and analysis results can be accessed.
 
+## Starting the software locally
+
+To start the API and consume it locally, some steps are required.
+Firstly, the database needs to be started.
+It is hosted in a Docker container, and its instructions can be found under [Database](#database).
+
+Secondly, the API needs to be started using dotnet, by running the Gitinsight.API project.
+
+Finally, to consume the API make a call to the application on `localhost:7199` using https.
+This can be done using a browser, cURL, or similar.
+The API takes arguments via the URL, in the form `organization-name/repository-name`.
+
 ## Architecture
 
 <!-- Describe the Architecture, both of the systems themselves, and between them -->
@@ -19,7 +31,7 @@ A Class diagram, detailing most of the the classes of the program, is shown belo
 An overview of the packages that the program consist of, is shown below.
 ![Package Diagram](img/PackageDiagram.png)
 
-An activity diagram of the backend is shown below. It details the backends process to download and analyse remote repositories.
+An activity diagram of the backend is shown below. It details the backends process to download and analyze remote repositories.
 ![Activity Diagram](img/ActivityDiagram.png)
 
 ## RESTful WEB API
@@ -55,8 +67,6 @@ The token can be generated on GitHub.
 See their [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
 ## Authentication and access
-
-### GitHub API Key
 
 ## Web page and illustrations
 
