@@ -40,7 +40,8 @@ app.UseAuthorization();
 var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
 
 
-app.MapGet("/", () => {
+app.MapGet("/", () =>
+{
     return "Write GitHub username and GitHub repo name in the url! ";
 }).WithOpenApi();
 app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitInsightContext context) =>

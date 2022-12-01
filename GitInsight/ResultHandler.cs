@@ -1,16 +1,19 @@
 namespace GitInsight;
 
-public class ResultHandler{
+public class ResultHandler
+{
     private readonly GitInsightContext _context;
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
-    public ResultHandler(GitInsightContext context, CommitRepository commitRepository, RepoRepository repoRepository){
+    public ResultHandler(GitInsightContext context, CommitRepository commitRepository, RepoRepository repoRepository)
+    {
         _context = context;
         _repositoryCommit = commitRepository;
         _repositoryRepos = repoRepository;
     }
 
-    public AuthorResult CalculateAuthorResult(IEnumerable<CommitDTO> list, string repoName){
+    public AuthorResult CalculateAuthorResult(IEnumerable<CommitDTO> list, string repoName)
+    {
         var Data = new List<Entry>();
         var q = list.GroupBy(
             (item => item.AuthorName),
@@ -28,7 +31,8 @@ public class ResultHandler{
     }
 
 
-    public FrequencyResult CalculateFrequencyResult(IEnumerable<CommitDTO> list, string repoName){
+    public FrequencyResult CalculateFrequencyResult(IEnumerable<CommitDTO> list, string repoName)
+    {
         var Data = new List<EntryF>();
         var q = list.GroupBy(
             (item => item.Date.Date),
@@ -46,7 +50,8 @@ public class ResultHandler{
         return new FrequencyResult(Data, repoName);
     }
 
-    public Response UpdateDateBaseWithResults( int repoId){
+    public Response UpdateDateBaseWithResults(int repoId)
+    {
         var repo = _repositoryRepos.FindAsync(repoId).Result;
         var newAuthorResult = CalculateAuthorResult(_repositoryCommit.ReadByRepoIdAsync(repoId).Result, repo.Name);
         var newFrequencyResult = CalculateFrequencyResult(_repositoryCommit.ReadByRepoIdAsync(repoId).Result, repo.Name);

@@ -42,7 +42,7 @@ public sealed class Program
             CheckForGitUpdates(repo);
             repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
-            var repoDTO= _repositoryRepos.FindAsync(repoId).Result;
+            var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
@@ -75,13 +75,13 @@ public sealed class Program
 
     int CreateOrUpdateData(Repository repo, string RepoName)
     {
-        var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;      
-   
+        var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;
+
         if (response == Response.Created)
         {
             SaveData(repo, repoId);
         }
-        
+
         else if (response == Response.AlreadyExists)
         {
             var repoDTO = _repositoryRepos.FindAsync(repoId).Result;

@@ -39,10 +39,10 @@ public class CommitRepository : ICommitRepository
         return await commits.ToListAsync();
     }
 
-        public async Task<IReadOnlyCollection<CommitDTO>> ReadByRepoIdAsync(int repoid)
+    public async Task<IReadOnlyCollection<CommitDTO>> ReadByRepoIdAsync(int repoid)
     {
         var commits = from c in _context.Commits
-                        where c.RepoID == repoid
+                      where c.RepoID == repoid
                       select new CommitDTO(c.Id, c.Repo.Id, c.Author.Name, c.Date);
         return await commits.ToListAsync();
     }
