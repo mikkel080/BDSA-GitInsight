@@ -1,4 +1,23 @@
-# Presentation - Group 1: Zero
+# GitInsight - Group 1: Zero
+
+## Validation: Value for Customer
+
+## Verification: Tests
+
+## Development
+
+* Change Management
+* Pull Requests
+* Code Review
+* Workflows
+
+## Software Process
+
+## Design Patterns
+
+## Architectural Patterns
+
+## Design Principles
 
 <!--
 How do you make sure that you implemented the right application?
