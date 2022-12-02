@@ -14,6 +14,18 @@
 
 ### Unit Test
 
+```C#
+[Fact]
+public void analysisReturnsSomethingAtAll()
+{
+    var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
+
+    forkNames.Should().NotBeNull();
+    forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(9);
+    forkNames.RepositoryIdentifiers.Should().Contain(new RepositoryIdentifier("jskoven", "lecture-code"));
+}
+```
+
 ### Integration Test
 
 ```C#
