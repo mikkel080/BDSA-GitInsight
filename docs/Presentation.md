@@ -1,10 +1,16 @@
 # GitInsight - Group 1: Zero
 
- `emno`, `amdh`, `mbia`, `ehel`, `hast`, `rafa`
+`emno`, `amdh`, `mbia`, `ehel`, `hast`, `rafa`
 
 ## Validation: Value for Customer
 
 ## Verification: Sample of Tests
+
+* Unit
+* Integration
+* End to end :(
+* User test :(
+* Performance :(
 
 ## Development
 
@@ -12,13 +18,23 @@
 * Pull Requests
 * Code Review & peer approval
 * Workflows
-* continuous integration / continuous deployment
+* Continuous Integration / continuous deployment
 
 ## Software Process
 
+* Iterative processes
+
 ## Design Patterns
 
+* Factory
+* Repository
+* Concurrency: `async`
+
 ## Architectural Patterns
+
+* Client server Architecture
+* Layers: Frontend & Backend
+* Backend: API, domain logic, data access, data persistance
 
 ## Design Principles
 
