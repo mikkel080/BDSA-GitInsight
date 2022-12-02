@@ -1,15 +1,18 @@
 # GitInsight - Group 1: Zero
 
+ `emno`, `amdh`, `mbia`, `ehel`, `hast`, `rafa`
+
 ## Validation: Value for Customer
 
-## Verification: Tests
+## Verification: Sample of Tests
 
 ## Development
 
 * Change Management
 * Pull Requests
-* Code Review
+* Code Review & peer approval
 * Workflows
+* continuous integration / continuous deployment
 
 ## Software Process
 
