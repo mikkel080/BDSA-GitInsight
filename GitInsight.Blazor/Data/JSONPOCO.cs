@@ -1,4 +1,4 @@
-﻿namespace GitInsight.Blazor.Data
+namespace GitInsight.Blazor.Data
 {
     public class Rootobject
     {

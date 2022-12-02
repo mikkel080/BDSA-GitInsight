@@ -1,5 +1,4 @@
 ﻿@page "/"
-
 <PageTitle>GitInsight</PageTitle>
 
 @using GitInsight.Blazor.Data
@@ -7,26 +6,26 @@
 
 @using System.Text.Json
 @using System.Text.Json.Serialization
+@using Radzen
 <h3>GitInsight</h3>
 
 <div class="container-fluid">
-       <div class="col px-3">
+       <div class="row px-3">
             <p>Please input the GitHub Repository that you want to check</p>
-            <div class="row-md-6 col-lg-4 p-3">
-           
+            <div class="col-6 p-3">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
                 <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
             
         </div>
-        <div class="row-md-6 col-lg-4 p-3">
+        <div class="col-6 p-3">
          
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
                 <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
            
         </div>
        </div>
-       <div class="col px-3">
-        <div class="row-md-6 col-lg-4 p-3">
+       <div class="row px-3">
+        <div class="col-6 p-3">
         <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Which mode do you wan the analysis to be in</RadzenText>
                     <RadzenSelectBar @bind-Value=@mode TValue="int">
                         <Items>
@@ -36,7 +35,7 @@
                     </RadzenSelectBar>
         </div>
         </div>
-        <div class="col px-3">
+        <div class="row p-3 w-50">
              <RadzenButton Click=@fetchAnalysis Text="Get Anlysis" ButtonStyle="ButtonStyle.Primary" />
         </div>
 

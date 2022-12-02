@@ -1,24 +1,28 @@
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 <RadzenDialog/>
 <RadzenNotification/>
 <RadzenContextMenu/>
 <RadzenTooltip/>
+
+
 <PageTitle>GitInsight.Blazor</PageTitle>
 <RadzenLayout>
-    <RadzenHeader>
-                        
+    <RadzenHeader>         
         <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" Style="vertical-align: middle" />
         <RadzenText Text="GitInsight" Style="display: inline; color: #ffffff" />
-        <div class="d-flex" style="display: inline; margin-left: 55%" >
-            <LoginDisplay></LoginDisplay>
-        </div> 
     </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded" Style="padding-right: 20px">
+                <div class="d-flex justify-content-end py-3" >
+                    <LoginDisplay></LoginDisplay>
+                </div>
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Home" Icon="home" />
         </RadzenPanelMenu>
         
     </RadzenSidebar>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
 </RadzenLayout>
 
 @code
