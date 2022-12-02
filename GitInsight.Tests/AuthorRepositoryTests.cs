@@ -1,4 +1,4 @@
-namespace GitInsight.Entities.Tests;
+namespace GitInsight.Tests;
 
 public sealed class AuthorRepositoryTests : IDisposable
 {

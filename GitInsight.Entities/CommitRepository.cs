@@ -1,5 +1,4 @@
 namespace GitInsight.Entities;
-using GitInsight.Core;
 
 public class CommitRepository : ICommitRepository
 {

@@ -1,4 +1,4 @@
-namespace GitInsight.Core;
+namespace GitInsight.Entities;
 
 public record AuthorDTO(int Id, string Name, ICollection<int> AllCommits);
 public record AuthorCreateDTO([StringLength(100)] string Name, ICollection<int> AllCommits);
