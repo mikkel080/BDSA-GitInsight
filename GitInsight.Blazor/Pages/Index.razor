@@ -1,9 +1,106 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>GitInsight</PageTitle>
 
-<h1>Hello, world!</h1>
+@using GitInsight.Blazor.Data
+@using Microsoft.AspNetCore.Components
 
-Welcome to your new app.
+@using System.Text.Json
+@using System.Text.Json.Serialization
+<h3>GitInsight</h3>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<div class="container-fluid">
+       <div class="col px-3">
+            <p>Please input the GitHub Repository that you want to check</p>
+            <div class="row-md-6 col-lg-4 p-3">
+           
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
+                <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
+            
+        </div>
+        <div class="row-md-6 col-lg-4 p-3">
+         
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
+                <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
+           
+        </div>
+       </div>
+       <div class="col px-3">
+        <div class="row-md-6 col-lg-4 p-3">
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Which mode do you wan the analysis to be in</RadzenText>
+                    <RadzenSelectBar @bind-Value=@mode TValue="int">
+                        <Items>
+                            <RadzenSelectBarItem Text="Author" Value="1" />
+                            <RadzenSelectBarItem Text="Commit" Value="2" />
+                        </Items>
+                    </RadzenSelectBar>
+        </div>
+        </div>
+        <div class="col px-3">
+             <RadzenButton Click=@fetchAnalysis Text="Get Anlysis" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+
+    <p @bind="Results" >Here are the results shown</p>
+    @if (isFetchSuccesful){
+        @foreach (var item in poco!.AuthorResult.Data)
+        {
+            <p>Name : @item.AuthorName</p>
+            @foreach (var item2 in item.FrequencyResults.Data)
+            {
+                <p>Date : @item2.Date  Count: @item2.Count</p>
+            }
+        }
+    } 
+       
+       </div>
+
+
+@code{
+    
+[Parameter]
+        public string org { get; set; } = "";
+
+        [Parameter]
+        public string proj { get; set; } = "";
+        [Inject]
+        IHttpClientFactory? ClientFactory { get; set; }
+
+        private bool isFetchSuccesful { get; set; }
+
+        private int mode { get; set; } = 0;
+        private Rootobject? poco;
+
+
+        private async Task fetchAnalysis()
+        {
+            isFetchSuccesful = false;
+            if (org == "" || proj == "" || mode == 0)
+                return;
+
+
+  
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                $"https://localhost:7199/{org}/{proj}");
+                /*request.Headers.Add("Accept", "application/vnd.github.v3+json");
+                request.Headers.Add("User-Agent", "HttpClientFactory-Sample");*/
+
+                var client = ClientFactory!.CreateClient();
+
+                var response = await client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    using var responseStream = await response.Content.ReadAsStreamAsync();
+                    poco = await JsonSerializer.DeserializeAsync
+                        <Rootobject>(responseStream);
+                    isFetchSuccesful = true;
+                    
+                }
+                else
+                {
+                    isFetchSuccesful = false;
+                }
+            }
+        }
+
+

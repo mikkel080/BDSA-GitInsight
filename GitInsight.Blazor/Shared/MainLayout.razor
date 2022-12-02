@@ -1,20 +1,29 @@
-﻿@inherits LayoutComponentBase
-
+@inherits LayoutComponentBase
+<RadzenDialog/>
+<RadzenNotification/>
+<RadzenContextMenu/>
+<RadzenTooltip/>
 <PageTitle>GitInsight.Blazor</PageTitle>
+<RadzenLayout>
+    <RadzenHeader>
+                        
+        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" Style="vertical-align: middle" />
+        <RadzenText Text="GitInsight" Style="display: inline; color: #ffffff" />
+        <div class="d-flex" style="display: inline; margin-left: 55%" >
+            <LoginDisplay></LoginDisplay>
+        </div> 
+    </RadzenHeader>
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Icon="home" />
+        </RadzenPanelMenu>
+        
+    </RadzenSidebar>
+</RadzenLayout>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@code
+{
+    bool sidebar1Expanded = true;
+}
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
