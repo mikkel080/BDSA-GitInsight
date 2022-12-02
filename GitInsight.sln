@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight", "GitInsight\Gi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Tests", "GitInsight.Tests\GitInsight.Tests.csproj", "{9F4B1603-2F5E-440B-BC9F-84C2B99D40B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Core", "GitInsight.Core\GitInsight.Core.csproj", "{D3BDD1E5-3EC1-4F3C-AF65-9D3DE0566560}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Entities", "GitInsight.Entities\GitInsight.Entities.csproj", "{7CAA4602-85D8-404A-8E6E-E16926F8ADAA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitInsight.Api", "GitInsight.Api\GitInsight.Api.csproj", "{E710FF18-D15A-475F-A52E-9BA5CA8D6271}"
