@@ -38,5 +38,13 @@ public class ForkTest
     {
         var forkNames = program.Run("itu-bdsa", "lecture-code");
         forkNames.Should().Contain("jskoven");
+        forkNames.Should().Contain("Clara-Lyngeraa");
+        forkNames.Should().Contain("duckth");
+        forkNames.Should().Contain("fredpetersen");
+        forkNames.Should().Contain("katrinesando");
+        forkNames.Should().Contain("LysetsDal");
+        forkNames.Should().Contain("SDeLaVida");
+        forkNames.Should().Contain("TheNooby127");
+        forkNames.Should().Contain("viggostarcke");
     }
 }
