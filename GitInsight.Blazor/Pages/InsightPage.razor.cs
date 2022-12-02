@@ -53,7 +53,8 @@ namespace GitInsight.Blazor.Pages
                 {
                     isFetchSuccesful = false;
                 }
-            } else
+            }
+            else
             {
                 //System.IO.FileNotFoundException: 'Could not find file 'C:\Users\User\source\repos\GitInsight\BDSA-GitInsight\GitInsight.Blazor\wwwroot\miinum98.json'.'
                 var file = File.ReadAllText("wwwroot/miinim98.json");
