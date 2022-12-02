@@ -34,7 +34,7 @@ app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitI
 {
     var program = new GitInsight.Program(context);
     return program.Run(GithubName, RepoName);
-});
+}).WithOpenApi();
 
 app.Run();
 
