@@ -8,9 +8,23 @@
 
 * Unit
 * Integration
-* End to end :(
+* End-to-end :(
 * User test :(
 * Performance :(
+
+### Unit Test
+
+### Integration Test
+
+```C#
+[Fact]
+public void CommitFrequency()
+{
+    var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
+    output.Should().Contain("2022-09-04T00:00:00");
+    output.Should().Contain("\"Count\": 3");
+}
+```
 
 ## Development
 
