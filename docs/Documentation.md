@@ -83,10 +83,11 @@ It runs locally in a docker container, and therefore needs a local installation 
 
 ## Tests
 
-A test suit is included with the program.
+A test suite is included with the program.
 For testing with remote repositories, real active repos are used.
 This enables easy testing, since the repositories already exists, but requires that they are not removed, made inaccessible or significantly changed.
 The tests are mainly unit tests, with some integration tests where necessary.
 There are, currently, no end-to-end tests of the program.
+The requirementstesting.md file contains a table of how the tests ensure that the code fulfills the requirements.
 
 ## Quality management
