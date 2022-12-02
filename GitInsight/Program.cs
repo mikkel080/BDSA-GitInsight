@@ -1,9 +1,7 @@
 ﻿namespace GitInsight;
 
-using System.Net.Http.Headers;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+using Microsoft.Extensions.Configuration;
 
 public sealed class Program
 {
@@ -45,8 +43,10 @@ public sealed class Program
             var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
+            var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+            var ForkResult = new ForkResult(githubName, repoName, configuration);
+
             var options = new JsonSerializerOptions { WriteIndented = true };
-            var ForkResult = forkAnalysis(githubName, repoName);
             var CombinedResult = new CombinedResult(RepositoryIdentifier, repoDTO.FrequencyResult!, repoDTO.AuthorResult!, ForkResult);
             return JsonSerializer.Serialize(CombinedResult, options);
         }
@@ -119,54 +119,7 @@ public sealed class Program
         }
         _resultHandler.UpdateDateBaseWithResults(repoId);
     }
-
-    public ForkResult forkAnalysis(string githubName, string repoName)
-    {
-        using HttpClient client = new();
-
-        var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var secret = configuration["GITHUBAPI"];
-
-        var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
-
-        if (secret == null)
-        {
-            secret = envSecret;
-        }
-
-        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
-
-        var perPage = 100;
-        var page = 0;
-        var forks = new List<RepositoryIdentifier>();
-        while (forks.Count >= page * perPage)
-        {
-            page++;
-            var pageSettings = $"?page={page}&per_page={perPage}";
-            var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks{pageSettings}";
-            var json = client.GetStringAsync(url);
-            var result = JsonSerializer.Deserialize<JsonNode>(json.Result);
-
-            foreach (var entry in result!.AsArray())
-            {
-                foreach (var item in entry!.AsObject())
-                {
-                    if (item!.Key == "full_name")
-                    {
-                        var value = item!.Value!.ToString().Split("/");
-                        var Organization = value[0];
-                        var Repository = value[1];
-                        var element = new RepositoryIdentifier(Organization, Repository);
-                        forks.Add(element);
-                    }
-                }
-            }
-        }
-        return new ForkResult(forks);
-    }
 }
 
 public record CombinedResult(RepositoryIdentifier RepositoryIdentifier, FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
-public record RepositoryIdentifier(string Organization, string Repository);
-public record ForkResult(IEnumerable<RepositoryIdentifier> RepositoryIdentifiers);
+
