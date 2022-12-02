@@ -1,5 +1,8 @@
 namespace GitInsight.Tests;
 
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
 public class ModeTest
 {
     Program program;
@@ -16,7 +19,7 @@ public class ModeTest
     }
 
     [Fact]
-    public void CommitFrequencyAsync()
+    public void CommitFrequency()
     {
         var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
 
@@ -38,7 +41,7 @@ public class ModeTest
     public void test_if_string_is_json()
     {
         var output = program.Run("Miniim98", "Assignment00_BDSA_2022");
-        JsonConvert.DeserializeObject(output).Should().NotBe(null);
-
+        JsonSerializer.Deserialize<JsonNode>(output).Should().NotBeNull();
+        output.Should().Contain("Assignment00_BDSA_2022");
     }
 }

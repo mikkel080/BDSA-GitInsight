@@ -1,9 +1,9 @@
 ﻿namespace GitInsight;
 
-using LibGit2Sharp;
-using LibGit2Sharp.Handlers;
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 public sealed class Program
 {
@@ -11,6 +11,7 @@ public sealed class Program
     private readonly AuthorRepository _repositoryAuthor;
     private readonly CommitRepository _repositoryCommit;
     private readonly RepoRepository _repositoryRepos;
+    private ResultHandler _resultHandler;
 
     public Program(GitInsightContext context)
     {
@@ -18,31 +19,19 @@ public sealed class Program
         _repositoryAuthor = new AuthorRepository(_context);
         _repositoryCommit = new CommitRepository(_context);
         _repositoryRepos = new RepoRepository(_context);
+        _resultHandler = new ResultHandler(_context, _repositoryCommit, _repositoryRepos);
     }
 
     public string getPathOrCloneRepo(string githubName, string repoName)
     {
         //Temp folders does not get deleted themselves so remember to delete
         var path = Path.GetTempPath();
-        string existingPath;
-        if (path.Contains(@"\"))
-        {
-            existingPath = path + @$"\{repoName}";
-        }
-        else
-        {
-            existingPath = path + @$"/{repoName}";
-
-        }
-        if (!Directory.Exists(existingPath))
+        string existingPath = path + @$"{repoName}";
+        if (!Directory.Exists(existingPath) || !Repository.IsValid(existingPath))
         {
             return Repository.Clone($"https://github.com/{githubName}/{repoName}.git", path + $"{repoName}");
         }
-        else if (Repository.IsValid(existingPath))
-        {
-            return existingPath;
-        }
-        return "";
+        return existingPath;
     }
 
     public string Run(string githubName, string repoName)
@@ -53,10 +42,13 @@ public sealed class Program
             CheckForGitUpdates(repo);
             repoId = CreateOrUpdateData(repo, githubName + "/" + repoName);
 
-            //Cursed but easy way to get results
-            var repoObject = _context.Repos.Where(r => r.Id == repoId).First();
+            var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
+            var RepositoryIdentifier = new RepositoryIdentifier(githubName, repoName);
 
-            return JsonConvert.SerializeObject(new CombinedResult(repoObject.FrequencyResult!, repoObject.AuthorResult!), Formatting.Indented);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var ForkResult = forkAnalysis(githubName, repoName);
+            var CombinedResult = new CombinedResult(RepositoryIdentifier, repoDTO.FrequencyResult!, repoDTO.AuthorResult!, ForkResult);
+            return JsonSerializer.Serialize(CombinedResult, options);
         }
     }
 
@@ -84,34 +76,35 @@ public sealed class Program
     int CreateOrUpdateData(Repository repo, string RepoName)
     {
         var (response, repoId) = _repositoryRepos.CreateAsync(new RepoCreateDTO(RepoName, new List<int>())).Result;
+
         if (response == Response.Created)
         {
-            SaveDataAsync(repo, repoId);
+            SaveData(repo, repoId);
         }
-        else
+
+        else if (response == Response.AlreadyExists)
         {
             var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
             var latestDate = _repositoryCommit.FindAsync(repoDTO.LatestCommit).Result;
-            if (repo.Commits.First().Author.When.DateTime != latestDate.Date)
+            if (repo.Commits.First().Author.When.DateTime.Date != latestDate.Date)
             {
-                UpdateDataAsync(repo, repoId, repoDTO);
+                UpdateData(repo, repoId, repoDTO);
             }
         }
         return repoId;
     }
 
-    void SaveDataAsync(Repository repo, int repoId)
+    void SaveData(Repository repo, int repoId)
     {
         foreach (var commit in repo.Commits.ToList())
         {
             var reponseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
         }
         var repoDTO = _repositoryRepos.FindAsync(repoId).Result;
-
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits)).Result;
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
-    void UpdateDataAsync(Repository repo, int repoId, RepoDTO repoDTO)
+    void UpdateData(Repository repo, int repoId, RepoDTO repoDTO)
     {
         var allCommits = _repositoryCommit.ReadAsync().Result;
         var currentCommits = allCommits.Where(c => c.RepoId == repoId).Select(c => c.Date);
@@ -124,43 +117,56 @@ public sealed class Program
                 var responseCreate = _repositoryCommit.CreateAsync(new CommitCreateDTO(repoId, commit.Author.Name, commit.Author.When.DateTime)).Result;
             }
         }
-        var response = _repositoryRepos.UpdateAsync(new RepoUpdateDTO(repoDTO.Id, repoDTO.Name, repoDTO.LatestCommit, repoDTO.AllCommits));
+        _resultHandler.UpdateDateBaseWithResults(repoId);
     }
 
-    public IEnumerable<String> forkAnalysis(string githubName, string repoName)
+    public ForkResult forkAnalysis(string githubName, string repoName)
     {
         using HttpClient client = new();
 
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var secret = configuration.GetSection("GITHUBAPI").Value;
+        var secret = configuration["GITHUBAPI"];
+
+        var envSecret = Environment.GetEnvironmentVariable("GITHUBAPI");
+
+        if (secret == null)
+        {
+            secret = envSecret;
+        }
 
         client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitInsight", "1.0"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Token", secret);
 
         var perPage = 100;
-        int page = 0;
-        List<String> forks = new List<String>();
+        var page = 0;
+        var forks = new List<RepositoryIdentifier>();
         while (forks.Count >= page * perPage)
         {
             page++;
             var pageSettings = $"?page={page}&per_page={perPage}";
             var url = $"https://api.github.com/repos/{githubName}/{repoName}/forks{pageSettings}";
             var json = client.GetStringAsync(url);
-            var result = (Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(json.Result)!;
+            var result = JsonSerializer.Deserialize<JsonNode>(json.Result);
 
-            foreach (var entry in result)
+            foreach (var entry in result!.AsArray())
             {
-                foreach (Newtonsoft.Json.Linq.JProperty? item in entry.Values<Newtonsoft.Json.Linq.JProperty>())
+                foreach (var item in entry!.AsObject())
                 {
-                    if (item!.Name == "full_name")
+                    if (item!.Key == "full_name")
                     {
-                        forks.Add(item!.Value.ToString());
+                        var value = item!.Value!.ToString().Split("/");
+                        var Organization = value[0];
+                        var Repository = value[1];
+                        var element = new RepositoryIdentifier(Organization, Repository);
+                        forks.Add(element);
                     }
                 }
             }
         }
-        return forks;
+        return new ForkResult(forks);
     }
 }
 
-public record CombinedResult(FrequencyResult FrequencyResult, AuthorResult AuthorResult);
+public record CombinedResult(RepositoryIdentifier RepositoryIdentifier, FrequencyResult FrequencyResult, AuthorResult AuthorResult, ForkResult ForkResult);
+public record RepositoryIdentifier(string Organization, string Repository);
+public record ForkResult(IEnumerable<RepositoryIdentifier> RepositoryIdentifiers);
