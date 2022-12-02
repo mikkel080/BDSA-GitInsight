@@ -19,7 +19,7 @@ public class ForkTest
     [Fact]
     public void analysisReturnsSomethingAtAll()
     {
-        
+
         var forkNames = new ForkResult("itu-bdsa", "lecture-code", configuration);
 
         forkNames.Should().NotBeNull();

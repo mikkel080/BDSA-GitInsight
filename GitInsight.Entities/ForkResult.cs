@@ -5,8 +5,8 @@ using System.Text.Json.Nodes;
 
 public class ForkResult
 {
-    public IEnumerable<RepositoryIdentifier> RepositoryIdentifiers {get; init;}
-    private string key{get; init;}
+    public IEnumerable<RepositoryIdentifier> RepositoryIdentifiers { get; init; }
+    private string key { get; init; }
 
     public ForkResult(string githubName, string repoName, IConfiguration configuration)
     {
@@ -17,7 +17,7 @@ public class ForkResult
         while (forks.Count >= page * perPage)
         {
             page++;
-            var result = getPage(page, perPage, githubName,repoName);
+            var result = getPage(page, perPage, githubName, repoName);
             foreach (var entry in result!.AsArray())
             {
                 foreach (var item in entry!.AsObject())
