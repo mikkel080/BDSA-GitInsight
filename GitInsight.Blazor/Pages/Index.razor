@@ -16,42 +16,79 @@
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
                 <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
             
-        </div>
-        <div class="col-6 p-3">
-         
+            </div>
+            <div class="col-6 p-3">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
                 <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
            
+            </div>
         </div>
-       </div>
-       <div class="row px-3">
-        <div class="col-6 p-3">
-        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Which mode do you wan the analysis to be in</RadzenText>
+        <div class="row px-3">
+            <div class="col-6 p-3">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Which mode do you wan the analysis to be in</RadzenText>
                     <RadzenSelectBar @bind-Value=@mode TValue="int">
                         <Items>
                             <RadzenSelectBarItem Text="Author" Value="1" />
                             <RadzenSelectBarItem Text="Commit" Value="2" />
                         </Items>
                     </RadzenSelectBar>
-        </div>
+            </div>
         </div>
         <div class="row p-3 w-50">
              <RadzenButton Click=@fetchAnalysis Text="Get Anlysis" ButtonStyle="ButtonStyle.Primary" />
         </div>
-
-    <p @bind="Results" >Here are the results shown</p>
-    @if (isFetchSuccesful){
-        @foreach (var item in poco!.AuthorResult.Data)
-        {
-            <p>Name : @item.AuthorName</p>
-            @foreach (var item2 in item.FrequencyResults.Data)
-            {
-                <p>Date : @item2.Date  Count: @item2.Count</p>
-            }
-        }
-    } 
-       
-       </div>
+    <div class="container">
+        <div class="row ">
+            <div class="col-6 my-2">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">Choose which chart you want to see</RadzenText>
+                <RadzenRadioButtonList @bind-Value=@ValueForCharts TValue="int" Visible="@isFetchSuccesful">
+                    <Items>
+                        <RadzenRadioButtonListItem Text="Pie chart for commits" Value="1" TValue="int" />
+                        <RadzenRadioButtonListItem Text="Bar chart for Author" Value="2" TValue="int" />
+                    </Items>
+                </RadzenRadioButtonList>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 my-2">
+                @if (isFetchSuccesful && ValueForCharts ==1 && poco is not null)
+                {
+                    var dataCommit = new List<DataItem>();
+                    foreach (var item in poco.FrequencyResult.Data)
+                    {
+                        dataCommit.Add(new DataItem(item.Date.ToShortDateString(), item.Count));
+                }
+                <p>Chart from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+                <RadzenChart>
+                    <RadzenDonutSeries Data="@dataCommit" CategoryProperty="Value" ValueProperty="Count">
+                        <RadzenSeriesDataLabels Visible="@true" />
+                    </RadzenDonutSeries>
+                </RadzenChart>
+                }
+            </div>
+        </div>
+        <div class="col-6 my-2">
+            @if (isFetchSuccesful && ValueForCharts==2)
+                {
+                <RadzenChart>
+                    @foreach (var item in poco!.AuthorResult.Data)
+                    {
+                        var data = new List<DataItem>();
+                        foreach (var item2 in item.FrequencyResults.Data)
+                            {
+                                data.Add(new DataItem(item2.Date.ToShortDateString(), item2.Count));
+                            }
+                        var name = item.AuthorName;
+                      <RadzenColumnSeries Data="@data" CategoryProperty="Value" Title="@name" LineType="LineType.Dashed" ValueProperty="Count">
+                        <RadzenSeriesDataLabels Visible="@true" />
+                    </RadzenColumnSeries>  
+                    }
+                    <RadzenColumnOptions Radius="5" />
+                </RadzenChart>
+                }
+        </div>
+    </div>
+</div>
 
 
 @code{
@@ -63,21 +100,27 @@
         public string proj { get; set; } = "";
         [Inject]
         IHttpClientFactory? ClientFactory { get; set; }
-
+        private int ValueForCharts {get; set;}
         private bool isFetchSuccesful { get; set; }
-
         private int mode { get; set; } = 0;
         private Rootobject? poco;
-
-
+        class DataItem
+        {
+            public string Value { get; set; }
+            public int Count { get; set; }
+            public DataItem(string value, int count)
+            {
+                Value = value;
+                Count = count;
+            }
+        }
+    
         private async Task fetchAnalysis()
         {
             isFetchSuccesful = false;
             if (org == "" || proj == "" || mode == 0)
                 return;
 
-
-  
                 var request = new HttpRequestMessage(HttpMethod.Get,
                 $"https://localhost:7199/{org}/{proj}");
                 /*request.Headers.Add("Accept", "application/vnd.github.v3+json");
