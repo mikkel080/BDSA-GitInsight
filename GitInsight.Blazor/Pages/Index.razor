@@ -53,7 +53,7 @@
                     <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
                     <RadzenLabel Text="Show Data Labels" For="dataLabels" />
 
-                    <p>Chart from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+                    <p>Chart from @poco!.RepositoryIdentifier!.Organization / @poco!.RepositoryIdentifier.Repository</p>
                 }
                 @if (isFetchSuccesful && ValueForCharts ==1 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
                 {
@@ -137,7 +137,7 @@
             @if (isFetchSuccesful && ValueForCharts==3)
                 {
                     <RadzenText>Forks</RadzenText>
-                    @foreach (var item in poco!.ForkResult.RepositoryIdentifiers)
+                    @foreach (var item in poco!.ForkResult!.RepositoryIdentifiers!)
                     {
                         <RadzenText>- @item.Organization / @item.Repository </RadzenText>
                     }
@@ -198,11 +198,11 @@
                     poco = await JsonSerializer.DeserializeAsync
                         <Rootobject>(responseStream);
                     isFetchSuccesful = true;
-                    if (poco.FrequencyResult.Data.Select(c => c.Date.Month).Distinct().Count() > 2)
+                    if (poco!.FrequencyResult!.Data!.Select(c => c.Date.Month).Distinct().Count() > 2)
                     {
                         dateFormat = "m";
                     }
-                    else if (poco.FrequencyResult.Data.Select(c => c.Date.Year).Distinct().Count() > 2)
+                    else if (poco!.FrequencyResult!.Data!.Select(c => c.Date.Year).Distinct().Count() > 2)
                     {
                         dateFormat = "y";
                     }
@@ -219,7 +219,7 @@
     {
         if (value != null)
         {
-            if (dateFormat.Equals("m")) { return Convert.ToDateTime(value).ToString("MMM");}
+            if (dateFormat!.Equals("m")) { return Convert.ToDateTime(value).ToString("MMM");}
             else if (dateFormat.Equals("y")) { return Convert.ToDateTime(value).ToString("y");}
             else { return Convert.ToDateTime(value).ToString("m");}
         }
@@ -235,13 +235,13 @@
             Datum[] tmp = new Datum[]{};
             if (dateFormat == "m")
             {
-                tmp =  (from i in poco.FrequencyResult.Data
+                tmp =  (from i in poco!.FrequencyResult!.Data
                     group i by i.Date.Month into grp
                     select new Datum{Date = new DateTime(2000, grp.Key, 1), Count = grp.Sum(i => i.Count)}).OrderBy(d => d.Date.Month).ToArray();
             }
             else if (dateFormat == "y")
             {
-                tmp =  (from i in poco.FrequencyResult.Data
+                tmp =  (from i in poco!.FrequencyResult!.Data
                             group i by i.Date.Year into grp
                             select new Datum{Date = new DateTime(grp.Key,1,1), Count = grp.Sum(i => i.Count)}).OrderBy(d => d.Date.Year).ToArray();
             }
@@ -253,19 +253,19 @@
 
             //Calculate author results
             var tmpDataAuthor = new List<(string, List<DataItem>)>();
-            foreach (var item in poco!.AuthorResult.Data)
+            foreach (var item in poco!.AuthorResult!.Data!)
             {
-                Datum2[] tmpAuthor= new Datum2[]{};
+                var tmpAuthor= new Datum2[]{};
                 var data = new List<DataItem>();
                 if (dateFormat == "m")
                 {
-                    tmpAuthor =  (from i in item.FrequencyResults.Data
+                    tmpAuthor =  (from i in item!.FrequencyResults!.Data
                             group i by i.Date.Month into grp
                             select new Datum2{Date = new DateTime(2000, grp.Key, 1), Count = grp.Sum(i => i.Count)}).OrderBy(d => d.Date.Month).ToArray();
                 }
                 else if (dateFormat == "y")
                 {
-                    tmpAuthor =  (from i in item.FrequencyResults.Data
+                    tmpAuthor =  (from i in item!.FrequencyResults!.Data
                             group i by i.Date.Year into grp
                             select new Datum2{Date = new DateTime(grp.Key,1,1), Count = grp.Sum(i => i.Count)}).OrderBy(d => d.Date.Year).ToArray();
                 }
@@ -273,7 +273,7 @@
                 {
                     data.Add(new DataItem(item2.Date.ToShortDateString(), item2.Count));
                 }
-                tmpDataAuthor.Add((item.AuthorName, data));
+                tmpDataAuthor.Add((item.AuthorName!, data));
                 authorCommitResult = tmpDataAuthor;
         }
         
