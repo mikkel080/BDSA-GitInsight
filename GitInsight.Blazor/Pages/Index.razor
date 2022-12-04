@@ -7,50 +7,43 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Radzen
-<h3>GitInsight</h3>
 
-<div class="container-fluid">
-       <div class="row px-3">
-            <p>Please input the GitHub Repository that you want to check</p>
+<RadzenText TextStyle="TextStyle.H5">Welcome to GitInsight!</RadzenText>
+
+<div class="container-fluid justify-items-center">
+       <div class="row px-3 align-items-center justify-items-center">
+            <p class="p3">Please input the GitHub Repository that you want to check</p>
             <div class="col-6 p-3">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
                 <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
-            
             </div>
+        </div>
+        <div class="row px-3 align-items-end justify-items-center">
             <div class="col-6 p-3">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
                 <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
-           
             </div>
         </div>
-        <div class="row px-3">
-            <div class="col-6 p-3">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Which mode do you wan the analysis to be in</RadzenText>
-                    <RadzenSelectBar @bind-Value=@mode TValue="int">
-                        <Items>
-                            <RadzenSelectBarItem Text="Author" Value="1" />
-                            <RadzenSelectBarItem Text="Commit" Value="2" />
-                        </Items>
-                    </RadzenSelectBar>
-            </div>
-        </div>
-        <div class="row p-3 w-50">
-             <RadzenButton Click=@fetchAnalysis Text="Get Anlysis" ButtonStyle="ButtonStyle.Primary" />
+        <div class="row p-3 justify-items-end align-items-center">
+                 <RadzenButton Click=@fetchAnalysis Text="Get Anlysis" ButtonStyle="ButtonStyle.Primary" />
         </div>
     <div class="container">
         <div class="row ">
             <div class="col-6 my-2">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">Choose which chart you want to see</RadzenText>
-                <RadzenRadioButtonList @bind-Value=@ValueForCharts TValue="int" Visible="@isFetchSuccesful">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">Choose which chart or results you want to see</RadzenText>
+                <RadzenSelectBar @bind-Value=@ValueForCharts TValue="int" Visible="@isFetchSuccesful">
                     <Items>
-                        <RadzenRadioButtonListItem Text="Pie chart for commits" Value="1" TValue="int" />
-                        <RadzenRadioButtonListItem Text="Bar chart for Author" Value="2" TValue="int" />
+                        <RadzenSelectBarItem Text="Pie chart for commits" Value="1" />
+                        <RadzenSelectBarItem Text="Bar chart for Author" Value="2" />
+                        <RadzenSelectBarItem Text="Fork results" Value="3" />
                     </Items>
-                </RadzenRadioButtonList>
+                </RadzenSelectBar>
             </div>
         </div>
-        <div class="row">
-            <div class="col-6 my-2">
+    </div>
+
+    <!--Charts and Results-->
+    <div class="container">
                 @if (isFetchSuccesful && ValueForCharts ==1 && poco is not null)
                 {
                     var dataCommit = new List<DataItem>();
@@ -65,9 +58,6 @@
                     </RadzenDonutSeries>
                 </RadzenChart>
                 }
-            </div>
-        </div>
-        <div class="col-6 my-2">
             @if (isFetchSuccesful && ValueForCharts==2)
                 {
                 <RadzenChart>
@@ -83,14 +73,19 @@
                         <RadzenSeriesDataLabels Visible="@true" />
                     </RadzenColumnSeries>  
                     }
-                    <RadzenColumnOptions Radius="5" />
                 </RadzenChart>
                 }
+            @if (isFetchSuccesful && ValueForCharts==3)
+                {
+                    <RadzenText>Forks</RadzenText>
+                    @foreach (var item in poco!.ForkResult.RepositoryIdentifiers)
+                    {
+                        <RadzenText>- @item.Organization / @item.Repository </RadzenText>
+                    }
+                   
+                }
         </div>
-    </div>
 </div>
-
-
 @code{
     /*Notes to charts and results:
     Make cards with each users frequency results chart for author results
@@ -106,7 +101,6 @@
         IHttpClientFactory? ClientFactory { get; set; }
         private int ValueForCharts {get; set;}
         private bool isFetchSuccesful { get; set; }
-        private int mode { get; set; } = 0;
         private Rootobject? poco;
         class DataItem
         {
@@ -118,11 +112,10 @@
                 Count = count;
             }
         }
-    
         private async Task fetchAnalysis()
         {
             isFetchSuccesful = false;
-            if (org == "" || proj == "" || mode == 0)
+            if (org == "" || proj == "")
                 return;
 
                 var request = new HttpRequestMessage(HttpMethod.Get,
@@ -140,13 +133,13 @@
                     poco = await JsonSerializer.DeserializeAsync
                         <Rootobject>(responseStream);
                     isFetchSuccesful = true;
-                    
                 }
                 else
                 {
                     isFetchSuccesful = false;
                 }
             }
+
         }
 
 

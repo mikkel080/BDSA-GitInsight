@@ -7,27 +7,19 @@
 
 <PageTitle>GitInsight.Blazor</PageTitle>
 <RadzenLayout>
-    <RadzenHeader>         
-        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" Style="vertical-align: middle" />
-        <RadzenText Text="GitInsight" Style="display: inline; color: #ffffff" />
+    <RadzenHeader>  
+        <div class="d-flex flex-row align-items-center w-100 justify-content-between h-100">
+            <div class="d-flex px-3">
+                <RadzenText TextStyle="TextStyle.H4" Text="GitInsight" Style="color: #ffffff" />
+            </div>
+            <div class="d-flex px-3">
+                <LoginDisplay></LoginDisplay>
+            </div>
+        </div>     
     </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded" Style="padding-right: 20px">
-                <div class="d-flex justify-content-end py-3" >
-                    <LoginDisplay></LoginDisplay>
-                </div>
-        <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Home" Icon="home" />
-        </RadzenPanelMenu>
-        
-    </RadzenSidebar>
     <RadzenBody>
         @Body
     </RadzenBody>
 </RadzenLayout>
-
-@code
-{
-    bool sidebar1Expanded = true;
-}
 
 

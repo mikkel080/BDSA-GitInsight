@@ -49,7 +49,7 @@ namespace GitInsight.Blazor.Data
 
     public class Forkresult
     {
-        public object[] RepositoryIdentifiers { get; set; }
+        public Repositoryidentifier[] RepositoryIdentifiers { get; set; }
     }
 
 }
