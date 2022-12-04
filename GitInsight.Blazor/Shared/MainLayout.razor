@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+<RadzenDialog/>
+<RadzenNotification/>
+<RadzenContextMenu/>
+<RadzenTooltip/>
+
+
+<PageTitle>GitInsight.Blazor</PageTitle>
+<RadzenLayout>
+    <RadzenHeader>  
+        <div class="d-flex flex-row align-items-center w-100 justify-content-between h-100">
+            <div class="d-flex px-3">
+                <RadzenText TextStyle="TextStyle.H4" Text="GitInsight" Style="color: #ffffff" />
+            </div>
+            <div class="d-flex px-3">
+                <LoginDisplay></LoginDisplay>
+            </div>
+        </div>     
+    </RadzenHeader>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+</RadzenLayout>
+
+
