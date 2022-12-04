@@ -68,6 +68,8 @@ See their [documentation](https://docs.github.com/en/authentication/keeping-your
 
 ## Authentication and access
 
+We use Azure AD B2C to authenticate the user and GitHub as the identity provider. This means that to access our web page the user have to login using their GitHub account.
+
 ## Web page and illustrations
 
 ## Database
@@ -80,13 +82,15 @@ The database contains information about the results from the analysis, the GitHu
 We use Data Transfer Objects to transfer data to and from the database.
 The database is a relational database, build using Microsoft SQL Server.
 It runs locally in a docker container, and therefore needs a local installation of docker to run.
+It connects to the database  using a connection string that are saved locally using dotnet user-secrets.
 
 ## Tests
 
-A test suit is included with the program.
+A test suite is included with the program.
 For testing with remote repositories, real active repos are used.
 This enables easy testing, since the repositories already exists, but requires that they are not removed, made inaccessible or significantly changed.
 The tests are mainly unit tests, with some integration tests where necessary.
 There are, currently, no end-to-end tests of the program.
+The requirementstesting.md file contains a table of how the tests ensure that the code fulfills the requirements.
 
 ## Quality management

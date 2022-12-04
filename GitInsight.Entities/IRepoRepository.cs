@@ -1,4 +1,4 @@
-namespace GitInsight.Core;
+namespace GitInsight.Entities;
 
 public interface IRepoRepository
 {
