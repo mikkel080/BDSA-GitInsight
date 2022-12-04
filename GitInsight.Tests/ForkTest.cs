@@ -3,6 +3,7 @@ namespace GitInsight.Tests;
 public class ForkTest
 {
     Program program;
+    IConfiguration configuration;
     public ForkTest()
     {
         var connection = new SqliteConnection("Filename=:memory:");
@@ -12,13 +13,14 @@ public class ForkTest
         var context = new GitInsightContext(builder.Options);
         context.Database.EnsureCreated();
         program = new Program(context);
-
+        configuration = new ConfigurationBuilder().AddUserSecrets<GitInsight.Program>().Build();
     }
 
     [Fact]
     public void analysisReturnsSomethingAtAll()
     {
-        var forkNames = program.forkAnalysis("itu-bdsa", "lecture-code");
+
+        var forkNames = new ForkResult("itu-bdsa", "lecture-code", configuration);
 
         forkNames.Should().NotBeNull();
         forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(1);
@@ -29,7 +31,7 @@ public class ForkTest
     [Fact(Skip = "Takes up a lot of requests")]
     public void analysisResultReturnsNumberHigherThanPageCount()
     {
-        var forkNames = program.forkAnalysis("processing", "p5.js");
+        var forkNames = new ForkResult("processing", "p5.js", configuration);
         forkNames.RepositoryIdentifiers.Count().Should().BeGreaterThanOrEqualTo(2000);
     }
 
