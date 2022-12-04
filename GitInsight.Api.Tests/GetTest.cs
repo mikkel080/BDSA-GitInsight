@@ -23,7 +23,7 @@ namespace GitInsight.Api.Tests
         {
             var json = await _client.GetFromJsonAsync<string>("Miniim98/Assignment00_BDSA_2022");
 
-            json.Should().Contain("2022-09-04T00:00:00");
+            json.Should().Contain("Miniim98");
         }
 
     }
