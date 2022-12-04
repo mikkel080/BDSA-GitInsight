@@ -11,20 +11,19 @@ namespace GitInsight.Api.Tests
         }
 
         [Fact, TestPriority(0)]
-        public async Task GetFrequencyResults()
+        public async Task GetPrompt()
         {
-            var frequencyResult = await _client.GetFromJsonAsync<FrequencyResult>("frequency_results");
+            var prompt = await _client.GetFromJsonAsync<string>("");
 
-            frequencyResult.Data.Should().Contain(new EntryF(3, "2022-09-04T00:00:00"));
+            prompt.Should().Contain("Write GitHub username and GitHub repo name in the url!");
         }
 
         [Fact, TestPriority(1)]
-        public async Task GetAuthorResults()
+        public async Task GetJson()
         {
-            var frequencyResult = await _client.GetFromJsonAsync<FrequencyResult>("frequency_results");
-            var authorResult = await _client.GetFromJsonAsync<AuthorResult>("author_result");
+            var json = await _client.GetFromJsonAsync<string>("Miniim98/Assignment00_BDSA_2022");
 
-            authorResult.Data.Should().Contain(new Entry("Miniim98", frequencyResult));
+            json.Should().Contain("2022-09-04T00:00:00");
         }
 
     }
