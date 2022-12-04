@@ -5,7 +5,7 @@ namespace GitInsight.Api.Tests
     {
         private readonly HttpClient _client;
 
-        public AuthorTest(CustomWebApplicationFactory factory)
+        public GetTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -13,7 +13,7 @@ namespace GitInsight.Api.Tests
         [Fact, TestPriority(0)]
         public async Task GetPrompt()
         {
-            var prompt = await _client.GetFromJsonAsync<string>("");
+            var prompt = await _client.GetStringAsync("");
 
             prompt.Should().Contain("Write GitHub username and GitHub repo name in the url!");
         }
@@ -21,7 +21,7 @@ namespace GitInsight.Api.Tests
         [Fact, TestPriority(1)]
         public async Task GetJson()
         {
-            var json = await _client.GetFromJsonAsync<string>("Miniim98/Assignment00_BDSA_2022");
+            var json = await _client.GetStringAsync("Miniim98/Assignment00_BDSA_2022");
 
             json.Should().Contain("Miniim98");
         }
