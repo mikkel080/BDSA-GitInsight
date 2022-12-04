@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace GitInsight.Api.Tests;
+namespace GitInsight.Tests;
 
 public class PriorityOrderer : ITestCaseOrderer
 {

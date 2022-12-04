@@ -1,4 +1,4 @@
-namespace GitInsight.Api.Tests;
+namespace GitInsight.Tests;
 
 [TestCaseOrderer("GitInsight.Api.Tests.PriorityOrderer", "GitInsight.Api.Tests")]
 public class GetTest : IClassFixture<CustomWebApplicationFactory>
