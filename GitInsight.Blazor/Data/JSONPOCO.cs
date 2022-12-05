@@ -58,7 +58,7 @@ namespace GitInsight.Blazor.Data
         public string AuthorName { get; set; }
         public Frequencyresults FrequencyResults { get; set; }
 
-        public Datum1( string authorName, Frequencyresults frequencyresults)
+        public Datum1(string authorName, Frequencyresults frequencyresults)
         {
             AuthorName = authorName;
             FrequencyResults = frequencyresults;
