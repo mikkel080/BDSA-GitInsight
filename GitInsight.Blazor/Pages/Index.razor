@@ -241,7 +241,7 @@
     private bool isFetchSuccesful { get; set; }
     private Rootobject? poco;
     private bool showDataLabels = false;
-    private string? dateFormat;
+    private string dateFormat = "d";
     private bool author = true;
     private bool commitsAll = true;
     private List<(string authorName, List<DataItem> results)>? authorCommitResult;
@@ -291,16 +291,19 @@
                 poco = await JsonSerializer.DeserializeAsync
                     <Rootobject>(responseStream);
                 isFetchSuccesful = true;
-                if (poco.FrequencyResult.Data.Select(c => c.Date.Month).Distinct().Count() > 2)
+                if (poco is not null)
                 {
-                    dateFormat = "m";
+                    if (poco.FrequencyResult.Data.Select(c => c.Date.Month).Distinct().Count() > 2)
+                    {
+                        dateFormat = "m";
+                    }
+                    else if (poco.FrequencyResult.Data.Select(c => c.Date.Year).Distinct().Count() > 2)
+                    {
+                        dateFormat = "y";
+                    }
+                    else {dateFormat = "d";}
+                    CalculateResults();
                 }
-                else if (poco.FrequencyResult.Data.Select(c => c.Date.Year).Distinct().Count() > 2)
-                {
-                    dateFormat = "y";
-                }
-                else {dateFormat = "d";}
-                CalculateResults();
             }
             else
             {
