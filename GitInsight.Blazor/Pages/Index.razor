@@ -9,11 +9,20 @@
 @using Radzen
 @using System.Drawing
 
-<RadzenText TextStyle="TextStyle.H5">Welcome to GitInsight!</RadzenText>
+
 
 <div class="container-fluid justify-items-center">
     <div class="row px-3 align-items-center justify-items-center">
-        <p class="p3">Please input the GitHub Repository that you want to check</p>
+         <div class="col-12 p-3">
+            <RadzenText TextStyle="TextStyle.H4" Class="py-3">Welcome to GitInsight!</RadzenText>
+        </div>
+    </div>
+    <div class="row px-3 align-items-center justify-items-center">
+        <div class="col-12 p-3">
+            <RadzenText TextStyle="TextStyle.Body1"><strong>Please input the GitHub Repository that you want to check</strong></RadzenText>
+        </div>
+    </div>
+    <div class="row px-3 align-items-center justify-items-center">
         <div class="col-6 p-3">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
             <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
@@ -26,14 +35,16 @@
         </div>
     </div>
     <div class="row p-3 justify-items-end align-items-center">
-                <RadzenButton Click=@fetchAnalysis Text="Get Analysis" ButtonStyle="ButtonStyle.Primary" />
+        <div class="col-6 p-3">
+            <RadzenButton Click=@fetchAnalysis Text="Get Analysis" ButtonStyle="ButtonStyle.Primary" />
+        </div>
     </div>
     <div class="container align-items-center p-3 justify-content-center">
-        <div class="row">
-            <div class="col-6 my-2">
+        <div class="row justify-content-center">
+            <div class="col-6 my-2 ">
                 <RadzenCard Class="mt-4 w-100 mb-4 d-flex align-items-center" Visible="@isFetchSuccesful" >
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">How do you want to see the results?</RadzenText>
-                <RadzenSelectBar @bind-Value=@ValueForCharts TValue="int" Visible="@isFetchSuccesful">
+                <RadzenSelectBar @bind-Value="@ValueForCharts" TValue="int" Visible="@isFetchSuccesful">
                     <Items>
                         <RadzenSelectBarItem Text="Point chart" Value="1" />
                         <RadzenSelectBarItem Text="Bar chart" Value="2" />
@@ -48,8 +59,8 @@
 
     <!--Charts and Results-->
     <div class="container">
-        <RadzenCard Class="mt-4 w-100 mb-4 d-flex justify-content-around" Visible="@isFetchSuccesful">
-            <div class="row ">
+        <RadzenCard Class="mt-4 w-100 mb-4 " Visible="@isFetchSuccesful">
+            <div class="row d-flex justify-content-around">
                 <div class="col-md-4 p-1">
                     <RadzenCheckBox @bind-Value="@author" Name="author2"></RadzenCheckBox>
                     <RadzenLabel Text="Show charts by author" For="author2" />
@@ -144,7 +155,7 @@
                                 </RadzenChart>
                             </RadzenCard> 
                         </div> 
-                         if (y == 5){y = 5;}
+                         if (y == 5){y = 0;}
                         else {y++;}
                     }
                 </div>
