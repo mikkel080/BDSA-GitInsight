@@ -28,6 +28,9 @@ To start the project open a terminal and run these commands:
 
 ```shell
 make run-docker
+```
+
+```shell
 make run-api
 make run-blazor
 ```
