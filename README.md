@@ -20,3 +20,17 @@ We expect to use about 6-10 hours a week on the project and we have a loose form
 
 For the Documentation of the program see [Documentation](docs/Documentation.md).
 For an overview of the Development Goals and intended process see [Development Goals](docs/DevelopmentGoals.md).
+
+## Run the software
+
+To run this project you need docker installed, a personal GitHub Token saved in user-secrets in the GitInsight project, a connection string saved in user-secrets in the GitInsight.Api project.
+To start the project open a terminal and run these commands:
+
+```shell
+make run-docker
+make run-api
+make run-blazor
+```
+
+Start with docker, wait 10 seconds and then run the last two.
+Now you should be able to access the webpage on [https://localhost:7129](https://localhost:7129)
