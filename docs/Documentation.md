@@ -72,6 +72,8 @@ We use Azure AD B2C to authenticate the user and GitHub as the identity provider
 
 ## Web page and illustrations
 
+To illustrate the results of the analysis we use Radzen components/charts. The webpage itself is a mix og Radzen components and the standart html/Bootstrap components. The charts adjust themselves depending on how many different months and year there is and recalculate the results so it is either commits per month, per year or per day. This ensures that the x-axis does not get too crowded.
+
 ## Database
 
 To start the database, run the following command in a terminal of you choice, with Docker installed.

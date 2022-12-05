@@ -33,7 +33,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 var scopeRequiredByApi = app.Configuration["AzureAd:Scopes"] ?? "";
 
@@ -50,6 +51,6 @@ app.MapGet("/{GithubName}/{RepoName}", (string GithubName, string RepoName, GitI
 
 app.Run();
 
-public partial class ProgramMinimalAPI {}
+public partial class ProgramMinimalAPI { }
 
 

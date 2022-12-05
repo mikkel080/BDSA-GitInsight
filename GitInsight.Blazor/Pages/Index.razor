@@ -7,197 +7,292 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @using Radzen
+@using System.Drawing
 
-<RadzenText TextStyle="TextStyle.H5">Welcome to GitInsight!</RadzenText>
+
 
 <div class="container-fluid justify-items-center">
-       <div class="row px-3 align-items-center justify-items-center">
-            <p class="p3">Please input the GitHub Repository that you want to check</p>
-            <div class="col-6 p-3">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
-                <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
-            </div>
+    <div class="row px-3 align-items-center justify-items-center">
+         <div class="col-12 p-3">
+            <RadzenText TextStyle="TextStyle.H4" Class="py-3">Welcome to GitInsight!</RadzenText>
         </div>
-        <div class="row px-3 align-items-end justify-items-center">
-            <div class="col-6 p-3">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
-                <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
-            </div>
+    </div>
+    <div class="row px-3 align-items-center justify-items-center">
+        <div class="col-12 p-3">
+            <RadzenText TextStyle="TextStyle.Body1"><strong>Please input the GitHub Repository that you want to check</strong></RadzenText>
         </div>
-        <div class="row p-3 justify-items-end align-items-center">
-                 <RadzenButton Click=@fetchAnalysis Text="Get Analysis" ButtonStyle="ButtonStyle.Primary" />
+    </div>
+    <div class="row px-3 align-items-center justify-items-center">
+        <div class="col-6 p-3">
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">GitHub user/organisation</RadzenText>
+            <RadzenTextBox Placeholder="GitHub user/organisation" @bind-Value=@org Class="w-100" />
         </div>
-    <div class="container">
-        <div class="row ">
-            <div class="col-6 my-2">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">Choose which chart or results you want to see</RadzenText>
-                <RadzenSelectBar @bind-Value=@ValueForCharts TValue="int" Visible="@isFetchSuccesful">
+    </div>
+    <div class="row px-3 align-items-end justify-items-center">
+        <div class="col-6 p-3">
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Repository name</RadzenText>
+            <RadzenTextBox Placeholder="Repository name" @bind-Value=@proj Class="w-100" />
+        </div>
+    </div>
+    <div class="row p-3 justify-items-end align-items-center">
+        <div class="col-6 p-3">
+            <RadzenButton Click=@fetchAnalysis Text="Get Analysis" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+    </div>
+    <div class="container align-items-center p-3 justify-content-center">
+        <div class="row justify-content-center">
+            <div class="col-6 my-2 ">
+                <RadzenCard Class="mt-4 w-100 mb-4 d-flex align-items-center" Visible="@isFetchSuccesful" >
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" Visible="@isFetchSuccesful">How do you want to see the results?</RadzenText>
+                <RadzenSelectBar @bind-Value="@ValueForCharts" TValue="int" Visible="@isFetchSuccesful">
                     <Items>
-                        <RadzenSelectBarItem Text="Bar chart all commits" Value="1" />
-                        <RadzenSelectBarItem Text="Bar chart Author's commits" Value="2" />
-                        <RadzenSelectBarItem Text="Fork results" Value="3" />
+                        <RadzenSelectBarItem Text="Point chart" Value="1" />
+                        <RadzenSelectBarItem Text="Bar chart" Value="2" />
+                        <RadzenSelectBarItem Text="Area chart" Value="3" />
+                        <RadzenSelectBarItem Text="Fork results" Value="4" />
                     </Items>
                 </RadzenSelectBar>
+                </RadzenCard>
             </div>
         </div>
     </div>
 
     <!--Charts and Results-->
     <div class="container">
-                @if (isFetchSuccesful)
-                {
+        <RadzenCard Class="mt-4 w-100 mb-4 " Visible="@isFetchSuccesful">
+            <div class="row d-flex justify-content-around">
+                <div class="col-md-4 p-1">
                     <RadzenCheckBox @bind-Value="@author" Name="author2"></RadzenCheckBox>
                     <RadzenLabel Text="Show charts by author" For="author2" />
+                </div>
+                <div class="col-md-4 p-1">
                     <RadzenCheckBox @bind-Value="@commitsAll" Name="commits2"></RadzenCheckBox>
                     <RadzenLabel Text="Show charts for all commits" For="commits2" />
+                    </div>
+                <div class="col-md-4 p-1">
                     <RadzenCheckBox @bind-Value="@showDataLabels" Name="dataLabels"></RadzenCheckBox>
                     <RadzenLabel Text="Show Data Labels" For="dataLabels" />
-
-                    <p>Chart from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
-                }
-                @if (isFetchSuccesful && ValueForCharts ==1 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
-                {
-                    @if (commitsAll) 
-                    {
-                        <RadzenText>All commits</RadzenText>      
-                        
-                    <RadzenChart>
-                        <RadzenLineSeries Data="@frequencyCommitResult" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
-                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
-                        </RadzenLineSeries>
-                        <RadzenCategoryAxis Formatter="@FormatDate" />
-                        <RadzenValueAxis Min="0" />
-                    </RadzenChart>
-                    }
-                    
-                    @if (author)
-                    {
-                        <RadzenText>Commits by Author</RadzenText>      
-                    <div class="row">
+                </div>
+            </div>
+        </RadzenCard>
+        
+        <!--Point chart-->
+        @if (ValueForCharts ==1 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
+        {
+            <p>Results from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+            @if (commitsAll) 
+            {
+                <RadzenText>All commits</RadzenText>      
+                <RadzenChart>
+                    <RadzenLineSeries Stroke="rgb(255,160,122)" StrokeWidth="2" Data="@frequencyCommitResult" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                         <RadzenMarkers MarkerType="MarkerType.Circle" />
+                    </RadzenLineSeries>
+                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                    <RadzenValueAxis Min="0" />
+                </RadzenChart>
+            }
+            @if (author)
+            {
+                <RadzenText>Commits by Author</RadzenText>      
+                <div class="row">
                     @foreach (var item in authorCommitResult)
                     {
-                        
+                        var colorString = $"rgb({colors[x].R}, {colors[x].G}, {colors[x].B})";
                         <div class="col-lg-6 p-3">
-                        <RadzenCard>
-                            <RadzenText>@item.authorName</RadzenText>
-                            <RadzenChart>
-                                <RadzenLineSeries Data="@item.results" CategoryProperty="Value" Title="Commit" LineType="LineType.Dashed" ValueProperty="Count">
-                                    <RadzenMarkers MarkerType="MarkerType.Square" />
-                                    <RadzenSeriesDataLabels Visible="@showDataLabels" />
-                                </RadzenLineSeries>
-                                 <RadzenCategoryAxis Formatter="@FormatDate" />
-                                 <RadzenValueAxis Min="0" />
-                            </RadzenChart>
-                        </RadzenCard> 
+                            <RadzenCard>
+                                <RadzenText>@item.authorName</RadzenText>
+                                <RadzenChart>
+                                    <RadzenLineSeries Stroke="@colorString" StrokeWidth="2" Data="@item.results" CategoryProperty="Value" Title="Commit" LineType="LineType.Dashed" ValueProperty="Count">
+                                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                         <RadzenMarkers MarkerType="MarkerType.Circle" />
+                                    </RadzenLineSeries>
+                                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                                    <RadzenValueAxis Min="0" />
+                                </RadzenChart>
+                            </RadzenCard> 
                         </div> 
+                         if (x == 5){x = 0;}
+                        else {x++;}
                     }
-                    </div>
-                    }
-                }
-                @if (!author && !commitsAll)
-                {
-                    <RadzenText>Please select a chart</RadzenText>
-                }
-            @if (isFetchSuccesful && ValueForCharts==2 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
-                {
-                    @if (commitsAll)
-                    {
-                        <RadzenText>All commits</RadzenText>      
-                        <RadzenChart>
-                            <RadzenColumnSeries Data="@frequencyCommitResult" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
-                                <RadzenSeriesDataLabels Visible="@true" />
-                            </RadzenColumnSeries>
-                            <RadzenCategoryAxis Formatter="@FormatDate" />
-                            <RadzenValueAxis Min="0" />
-                        </RadzenChart>
-                    }
-                    @if (author)
-                    {
-                        <RadzenText>Commits by Author</RadzenText>      
-                        <div class="row">
-                        @foreach (var item in authorCommitResult)
-                        {
-                            <div class="col-lg-6 p-3">
-                                <RadzenCard>
-                                    <RadzenText>@item.authorName</RadzenText>
-                                    <RadzenChart>
-                                        <RadzenColumnSeries Data="@item.results" CategoryProperty="Value" Title="Commit" LineType="LineType.Dashed" ValueProperty="Count">
-                                            <RadzenMarkers MarkerType="MarkerType.Square" />
-                                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
-                                        </RadzenColumnSeries>
-                                        <RadzenCategoryAxis Formatter="@FormatDate" />
-                                        <RadzenValueAxis Min="0" />
-                                    </RadzenChart>
-                                </RadzenCard> 
-                            </div> 
-                        }
-                    </div>
-                    }
-                }
-            @if (isFetchSuccesful && ValueForCharts==3)
-                {
-                    <RadzenText>Forks</RadzenText>
-                    @foreach (var item in poco!.ForkResult.RepositoryIdentifiers)
-                    {
-                        <RadzenText>- @item.Organization / @item.Repository </RadzenText>
-                    }
-                   
-                }
-        </div>
-</div>
-@code{
-    /*Notes to charts and results:
-    Make cards with each users frequency results chart for author results
-    Overview over forks
-    Tendency charts 
-    bar and point charts for frequency results*/
-[Parameter]
-        public string org { get; set; } = "";
-
-        [Parameter]
-        public string proj { get; set; } = "";
-        [Inject]
-        IHttpClientFactory? ClientFactory { get; set; }
-        private int ValueForCharts {get; set;}
-        private bool isFetchSuccesful { get; set; }
-        private Rootobject? poco;
-        private bool showDataLabels = false;
-        private string? dateFormat;
-        private bool author = true;
-        private bool commitsAll = true;
-        private List<(string authorName, List<DataItem> results)>? authorCommitResult;
-        private List<DataItem>? frequencyCommitResult;
-        class DataItem
-        {
-            public string Value { get; set; }
-            public int Count { get; set; }
-            public DataItem(string value, int count)
-            {
-                Value = value;
-                Count = count;
+                </div>
             }
         }
-        private async Task fetchAnalysis()
+
+        <!--Column chart-->
+        @if (ValueForCharts==2 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
         {
-            isFetchSuccesful = false;
-            if (org == "" || proj == "")
-                return;
+            <p>Results from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+            @if (commitsAll)
+            {
+                <RadzenText>All commits</RadzenText>      
+                <RadzenChart>
+                    <RadzenColumnSeries Fill="rgba(255,160,122, .5)" Data="@frequencyCommitResult" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        <RadzenMarkers MarkerType="MarkerType.Square" />
+                    </RadzenColumnSeries>
+                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                    <RadzenValueAxis Min="0" />
+                </RadzenChart>
+            }
+            @if (author)
+            {
+                <RadzenText>Commits by Author</RadzenText>      
+                <div class="row">
+                    @foreach (var item in authorCommitResult)
+                    {
+                        var colorString = $"rgb({colors[y].R}, {colors[y].G}, {colors[y].B})";
+                        <div class="col-lg-6 p-3">
+                            <RadzenCard>
+                                <RadzenText>@item.authorName</RadzenText>
+                                <RadzenChart>
+                                    <RadzenColumnSeries Fill="@colorString" Data="@item.results" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
+                                        <RadzenMarkers MarkerType="MarkerType.Square" />
+                                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                    </RadzenColumnSeries>
+                                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                                    <RadzenValueAxis Min="0" />
+                                </RadzenChart>
+                            </RadzenCard> 
+                        </div> 
+                         if (y == 5){y = 0;}
+                        else {y++;}
+                    }
+                </div>
+            }
+        }
 
-                var request = new HttpRequestMessage(HttpMethod.Get,
-                $"https://localhost:7199/{org}/{proj}");
-                /*request.Headers.Add("Accept", "application/vnd.github.v3+json");
-                request.Headers.Add("User-Agent", "HttpClientFactory-Sample");*/
+        <!--Area chart-->
+        @if (ValueForCharts ==3 && poco is not null && dateFormat is not null && authorCommitResult is not null && frequencyCommitResult is not null)
+        {
+            <p>Results from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+            @if (commitsAll) 
+            {
+                <RadzenText>All commits</RadzenText>      
+                <RadzenChart>
+                    <RadzenAreaSeries Stroke="rgb(255,160,122)" StrokeWidth="2" Fill="rgba(255,160,122, .5)" Data="@frequencyCommitResult" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
+                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                         <RadzenMarkers MarkerType="MarkerType.Circle" />
+                    </RadzenAreaSeries>
+                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                    <RadzenValueAxis Min="0" />
+                </RadzenChart>
+            }
+                    
+            @if (author)
+            { 
+                <RadzenText>Commits by Author</RadzenText>      
+                <div class="row">
+                    @foreach (var item in authorCommitResult)
+                    {
+                        var colorString = $"rgb({colors[z].R}, {colors[z].G}, {colors[z].B})";
+                        var fillString = $"rgba({colors[z].R}, {colors[z].G}, {colors[z].B}, .5)";
+                        <div class="col-lg-6 p-3">
+                            <RadzenCard>
+                                <RadzenText>@item.authorName</RadzenText>
+                                <RadzenChart>
+                                    <RadzenAreaSeries Stroke="@colorString" StrokeWidth="2" Fill="@fillString" Data="@item.results" CategoryProperty="Value" Title="Commit" ValueProperty="Count">
+                                        <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                                         <RadzenMarkers MarkerType="MarkerType.Circle" />
+                                    </RadzenAreaSeries>
+                                    <RadzenCategoryAxis Formatter="@FormatDate" />
+                                    <RadzenValueAxis Min="0" />
+                                </RadzenChart>
+                            </RadzenCard> 
+                        </div> 
+                        if (z == 5){z = 0;}
+                        else {z++;}
+                    }
+            </div>
+            }
+        }
+        @if (poco is not null && ValueForCharts==4)
+            {
+                <p>Results from @poco!.RepositoryIdentifier.Organization / @poco!.RepositoryIdentifier.Repository</p>
+                <RadzenText>Forks</RadzenText>
+                    @if (poco.ForkResult.RepositoryIdentifiers.Count() == 0)
+                    {
+                       <div class="d-flex">
+                        <RadzenText>This Github repository has no forks yet </RadzenText>
+                        </div> 
+                    }
+                    else
+                    {
+                        @foreach (var item in poco!.ForkResult.RepositoryIdentifiers)
+                        {
+                            <div class="d-flex">
+                            <RadzenText>- @item.Organization / @item.Repository </RadzenText>
+                            </div>
+                        }
+                    }                   
+                }
+        </div>
+    </div>
 
-                var client = ClientFactory!.CreateClient();
+@code{
+    [Parameter]
+    public string org { get; set; } = "";
 
-                var response = await client.SendAsync(request);
+    [Parameter]
+    public string proj { get; set; } = "";
+    [Inject]
+    IHttpClientFactory? ClientFactory { get; set; }
+    private int ValueForCharts = 2;
+    private bool isFetchSuccesful { get; set; }
+    private Rootobject? poco;
+    private bool showDataLabels = false;
+    private string dateFormat = "d";
+    private bool author = true;
+    private bool commitsAll = true;
+    private List<(string authorName, List<DataItem> results)>? authorCommitResult;
+    private List<DataItem>? frequencyCommitResult;
+    List<Color> colors = getColors();
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
 
-                if (response.IsSuccessStatusCode)
+    class DataItem
+    {
+        public string Value { get; set; }
+        public int Count { get; set; }
+        public DataItem(string value, int count)
+        {
+            Value = value;
+            Count = count;
+        }
+    }
+
+    private static List<Color> getColors()
+    {
+        return new List<Color>(){Color.FromKnownColor(KnownColor.Red),
+                                Color.FromKnownColor(KnownColor.DarkOrange),
+                                Color.FromKnownColor(KnownColor.Gold),
+                                Color.FromKnownColor(KnownColor.Green),
+                                Color.FromKnownColor(KnownColor.DodgerBlue),
+                                Color.FromKnownColor(KnownColor.DarkViolet)};
+    }
+    private async Task fetchAnalysis()
+    {
+        isFetchSuccesful = false;
+        if (org == "" || proj == "")
+            return;
+            var request = new HttpRequestMessage(HttpMethod.Get,
+            $"https://localhost:7199/{org}/{proj}");
+            /*request.Headers.Add("Accept", "application/vnd.github.v3+json");
+            request.Headers.Add("User-Agent", "HttpClientFactory-Sample");*/
+
+            var client = ClientFactory!.CreateClient();
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                poco = await JsonSerializer.DeserializeAsync
+                    <Rootobject>(responseStream);
+                isFetchSuccesful = true;
+                if (poco is not null)
                 {
-                    using var responseStream = await response.Content.ReadAsStreamAsync();
-                    poco = await JsonSerializer.DeserializeAsync
-                        <Rootobject>(responseStream);
-                    isFetchSuccesful = true;
                     if (poco.FrequencyResult.Data.Select(c => c.Date.Month).Distinct().Count() > 2)
                     {
                         dateFormat = "m";
@@ -209,11 +304,12 @@
                     else {dateFormat = "d";}
                     CalculateResults();
                 }
-                else
-                {
-                    isFetchSuccesful = false;
-                }
             }
+            else
+            {
+                isFetchSuccesful = false;
+            }
+        }
 
     string FormatDate(object value)
     {
@@ -232,7 +328,7 @@
         if (poco is not null)
         {
             var tmpData = new List<DataItem>();
-            Datum[] tmp = new Datum[]{};
+            var tmp = poco.FrequencyResult.Data;
             if (dateFormat == "m")
             {
                 tmp =  (from i in poco.FrequencyResult.Data
@@ -244,7 +340,8 @@
                 tmp =  (from i in poco.FrequencyResult.Data
                             group i by i.Date.Year into grp
                             select new Datum{Date = new DateTime(grp.Key,1,1), Count = grp.Sum(i => i.Count)}).OrderBy(d => d.Date.Year).ToArray();
-            }
+            } 
+            
             foreach (var item in tmp)
             {
                 tmpData.Add(new DataItem(item.Date.ToShortDateString(), item.Count));
@@ -255,7 +352,7 @@
             var tmpDataAuthor = new List<(string, List<DataItem>)>();
             foreach (var item in poco!.AuthorResult.Data)
             {
-                Datum2[] tmpAuthor= new Datum2[]{};
+                var tmpAuthor = item.FrequencyResults.Data;
                 var data = new List<DataItem>();
                 if (dateFormat == "m")
                 {
@@ -275,11 +372,9 @@
                 }
                 tmpDataAuthor.Add((item.AuthorName, data));
                 authorCommitResult = tmpDataAuthor;
-        }
+            }
         
-    }
+        }
 
     }
 }
-
-
